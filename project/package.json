@@ -1,0 +1,12 @@
+{
+  "name": "clippr",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Clippr — viral clip marketplace prototype (static site)",
+  "scripts": {
+    "build": "echo 'No build step — static HTML served as-is'"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
