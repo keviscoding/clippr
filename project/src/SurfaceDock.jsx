@@ -22,7 +22,7 @@ function SurfaceDock({ surface, setSurface, hidden }){
       borderRadius:999,
       boxShadow:"0 10px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)",
     }}>
-      <div style={{padding:"0 10px 0 12px",fontFamily:"Geist Mono,monospace",fontSize:10,color:"rgba(212,255,58,0.9)",letterSpacing:"0.12em",fontWeight:600}}>PROTOTYPE</div>
+      <div style={{padding:"0 10px 0 12px",fontFamily:"Geist Mono,monospace",fontSize:10,color:"rgba(212,255,58,0.9)",letterSpacing:"0.12em",fontWeight:600}}>PREVIEW</div>
       {surfaces.map(s => (
         <button key={s.id} onClick={()=>setSurface(s.id)} style={{
           display:"inline-flex",alignItems:"center",gap:7,padding:"7px 14px",borderRadius:999,border:"none",cursor:"pointer",
