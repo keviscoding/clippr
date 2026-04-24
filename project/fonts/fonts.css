@@ -1,0 +1,6 @@
+/* Payload typography — Geist Sans + Geist Mono from Google Fonts.
+   SUBSTITUTION NOTE: Geist is the closest free match to modern geometric-sans
+   creator-economy aesthetic. If you want a paid alternative (ABC Diatype,
+   Söhne, General Sans), drop the font files into fonts/ and swap here. */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');

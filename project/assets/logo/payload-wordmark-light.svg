@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 56" fill="none">
+  <rect x="0" y="0" width="56" height="56" rx="12" fill="#FAFAF7"></rect>
+  <path d="M14 14 h16 a11 11 0 0 1 0 22 h-9 v7 h-7 V14z" fill="#D4FF3A"></path>
+  <path d="M23 21 l9 5.5 -9 5.5 z" fill="#FAFAF7"></path>
+  <text x="72" y="38" font-family="Geist, &#39;Geist Sans&#39;, -apple-system, system-ui, sans-serif" font-size="30" font-weight="600" letter-spacing="-0.02em" fill="#FAFAF7">payload</text>
+</svg>

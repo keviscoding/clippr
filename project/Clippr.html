@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Clippr — Payload Prototype</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  html, body { margin:0; padding:0; font-family: Geist, sans-serif; }
+  body { background: #0A0A0A; color: #FAFAF7; }
+  body[data-world="light"] { background: #FAFAF7; color: #0A0A0A; }
+  * { box-sizing: border-box; }
+  /* Smooth world cross-fade */
+  .surface-wrap { animation: surfaceIn 320ms cubic-bezier(0.2,0.8,0.2,1); }
+  @keyframes surfaceIn { from { opacity:0; transform: translateY(6px) } to { opacity:1; transform:none } }
+</style>
+</head>
+<body class="payload-dark" data-world="dark" data-screen-label="Clippr Prototype">
+<div id="root"></div>
+
+<!-- Shared primitives loaded FIRST so later files (which also export to window) can call them -->
+<script type="text/babel" src="src/shared.jsx"></script>
+<script type="text/babel" src="src/tweaks-panel.jsx"></script>
+<script type="text/babel" src="src/SurfaceDock.jsx"></script>
+
+<!-- Marketing surface components -->
+<script type="text/babel" src="src/marketing/Nav.jsx"></script>
+<script type="text/babel" src="src/marketing/Hero.jsx"></script>
+<script type="text/babel" src="src/marketing/PayoutTicker.jsx"></script>
+<script type="text/babel" src="src/marketing/HowItWorks.jsx"></script>
+<script type="text/babel" src="src/marketing/CampaignGrid.jsx"></script>
+<script type="text/babel" src="src/marketing/ProofSection.jsx"></script>
+<script type="text/babel" src="src/marketing/CtaFooter.jsx"></script>
+<script type="text/babel" src="src/marketing/AuthModal.jsx"></script>
+
+<!-- Clipper surface components -->
+<script type="text/babel" src="src/clipper/Sidebar.jsx"></script>
+<script type="text/babel" src="src/clipper/EarningsOverview.jsx"></script>
+<script type="text/babel" src="src/clipper/CampaignsList.jsx"></script>
+<script type="text/babel" src="src/clipper/PayoutsPanel.jsx"></script>
+<script type="text/babel" src="src/clipper/SubmitClipModal.jsx"></script>
+
+<!-- Admin surface components -->
+<script type="text/babel" src="src/admin/AdminSidebar.jsx"></script>
+<script type="text/babel" src="src/admin/AdminOverview.jsx"></script>
+<script type="text/babel" src="src/admin/ReviewQueue.jsx"></script>
+<script type="text/babel" src="src/admin/CampaignEditor.jsx"></script>
+<script type="text/babel" src="src/admin/PayoutsAdmin.jsx"></script>
+
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "surface": "clipper",
+    "rpm": 1,
+    "heroVariant": "clip-post-paid",
+    "showTicker": true,
+    "brand": "payload",
+    "accent": "#D4FF3A"
+  }/*EDITMODE-END*/;
+
+  // ---------- Clipper surface wrapper ----------
+  function ClipperApp(){
+    const [view, setView] = useState("overview");
+    const [submitOpen, setSubmitOpen] = useState(false);
+    const clips = [
+      {title:"POV: texting her back like this", handle:"@rizz.clips.daily",  campaign:"Rizz", status:"approved", views:124820, earned:124.82, thumb:"linear-gradient(135deg,#6366f1,#ec4899)"},
+      {title:"Guys, use THIS reply for cold openers",  handle:"@rizz.clips.daily", campaign:"Rizz", status:"approved", views: 82194, earned:82.19,  thumb:"linear-gradient(135deg,#3b82f6,#10b981)"},
+      {title:"Stop texting 'hey' — try THIS", handle:"@rizz.clips.daily", campaign:"Rizz", status:"pending", views: 12402, earned:0, thumb:"linear-gradient(135deg,#f59e0b,#ef4444)"},
+      {title:"She left me on read. Here's my comeback.", handle:"@rizz.clips.daily", campaign:"Rizz", status:"approved", views: 42058, earned:42.05, thumb:"linear-gradient(135deg,#4ADE80,#0ea5e9)"},
+    ];
+    return (
+      <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
+        <Sidebar view={view} setView={setView}/>
+        <div>
+          <Topbar onSubmit={()=>setSubmitOpen(true)}/>
+          {view==="overview"  && <EarningsOverview clips={clips}/>}
+          {view==="campaigns" && <CampaignsList onSubmit={()=>setSubmitOpen(true)}/>}
+          {view==="clips"     && <EarningsOverview clips={clips}/>}
+          {view==="payouts"   && <PayoutsPanel/>}
+        </div>
+        <SubmitClipModal open={submitOpen} onClose={()=>setSubmitOpen(false)}/>
+      </div>
+    );
+  }
+
+  // ---------- Admin surface wrapper ----------
+  function AdminTopbar(){
+    return (
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"16px 28px",borderBottom:"1px solid #E8E6DF",background:"rgba(250,250,247,0.8)",backdropFilter:"blur(12px)",position:"sticky",top:0,zIndex:10}}>
+        <div>
+          <div style={{fontFamily:"Geist Mono,monospace",fontSize:10,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6E6D66"}}>WELCOME BACK KEVIS</div>
+          <div style={{fontSize:20,fontWeight:600,letterSpacing:"-0.015em",marginTop:2}}>8 clips waiting · 12 payouts ready for Friday</div>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <button style={{padding:"9px 14px",background:"#fff",border:"1px solid #E8E6DF",borderRadius:10,cursor:"pointer",fontFamily:"Geist,sans-serif",fontWeight:600,fontSize:14,display:"inline-flex",alignItems:"center",gap:8}}><Icon name="plus" size={15}/> New campaign</button>
+          <div style={{width:36,height:36,borderRadius:999,background:"linear-gradient(135deg,#D4FF3A,#4ADE80)",display:"grid",placeItems:"center",fontWeight:700,color:"#0A0A0A"}}>K</div>
+        </div>
+      </div>
+    );
+  }
+  function AdminApp(){
+    const [view, setView] = useState("overview");
+    return (
+      <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
+        <AdminSidebar view={view} setView={setView}/>
+        <div>
+          <AdminTopbar/>
+          {view==="overview"  && <AdminOverview/>}
+          {view==="review"    && <ReviewQueue/>}
+          {view==="campaigns" && <CampaignEditor/>}
+          {view==="payouts"   && <PayoutsAdmin/>}
+          {view==="clippers"  && <AdminOverview/>}
+        </div>
+      </div>
+    );
+  }
+
+  // ---------- Marketing surface wrapper ----------
+  function MarketingApp({ onAuth, showTicker, heroVariant }){
+    const [auth, setAuth] = useState({open:false, mode:"signup"});
+    const openAuth = (mode) => setAuth({open:true, mode});
+    const closeAuth = () => setAuth(a => ({...a, open:false}));
+    const doSwitch = () => setAuth(a => ({...a, mode: a.mode==="signup"?"login":"signup"}));
+    return (
+      <div style={{background:"#0A0A0A",color:"#FAFAF7",minHeight:"100vh"}}>
+        <Nav onJoin={()=>openAuth("signup")} onLogin={()=>openAuth("login")}/>
+        <Hero onJoin={()=>openAuth("signup")} variant={heroVariant}/>
+        {showTicker && <PayoutTicker/>}
+        <HowItWorks/>
+        <CampaignGrid/>
+        <ProofSection/>
+        <CtaFooter onJoin={()=>openAuth("signup")}/>
+        <AuthModal
+          open={auth.open} mode={auth.mode}
+          onClose={closeAuth}
+          onSwitch={doSwitch}
+          onSuccess={()=>{ closeAuth(); onAuth && onAuth(); }}
+        />
+      </div>
+    );
+  }
+
+  function App(){
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+    const surface = t.surface;
+
+    // Mirror body world for body bg
+    useEffect(()=> {
+      document.body.dataset.world = surface==="marketing" ? "dark" : "light";
+      document.body.className = surface==="marketing" ? "payload-dark" : "";
+    }, [surface]);
+
+    // Apply tweakable accent overrides at runtime
+    useEffect(() => {
+      document.documentElement.style.setProperty("--accent", t.accent);
+    }, [t.accent]);
+
+    const screenLabel = {marketing:"01 Marketing", clipper:"02 Clipper dashboard", admin:"03 Admin dashboard"}[surface];
+
+    return (
+      <div data-screen-label={screenLabel}>
+        <SurfaceDock surface={surface} setSurface={(s)=>setTweak("surface",s)}/>
+        <div key={surface} className="surface-wrap">
+          {surface==="marketing" && <MarketingApp onAuth={()=>setTweak("surface","clipper")} showTicker={t.showTicker} heroVariant={t.heroVariant}/>}
+          {surface==="clipper" && <ClipperApp/>}
+          {surface==="admin" && <AdminApp/>}
+        </div>
+
+        <TweaksPanel title="Tweaks">
+          <TweakSection label="Surface"/>
+          <TweakRadio
+            label="Which view"
+            value={t.surface}
+            options={[
+              {value:"marketing", label:"Marketing"},
+              {value:"clipper",   label:"Clipper"},
+              {value:"admin",     label:"Admin"},
+            ]}
+            onChange={(v)=>setTweak("surface", v)}
+          />
+
+          <TweakSection label="Marketing"/>
+          <TweakRadio
+            label="Hero headline"
+            value={t.heroVariant}
+            options={[
+              {value:"clip-post-paid",  label:"Clip. Post. Get paid."},
+              {value:"turn-views-cash", label:"Turn views into cash."},
+              {value:"first-payout-2w", label:"Your 1st payout in 2 wks."},
+            ]}
+            onChange={(v)=>setTweak("heroVariant", v)}
+          />
+          <TweakToggle label="Show payout ticker" value={t.showTicker} onChange={(v)=>setTweak("showTicker", v)}/>
+
+          <TweakSection label="Campaign economics"/>
+          <TweakSlider label="RPM (rate / 1K views)" value={t.rpm} min={0.25} max={3} step={0.05} unit="$" onChange={(v)=>setTweak("rpm", v)}/>
+
+          <TweakSection label="Brand"/>
+          <TweakText  label="Brand name" value={t.brand} onChange={(v)=>setTweak("brand", v)}/>
+          <TweakColor label="Accent" value={t.accent} onChange={(v)=>setTweak("accent", v)}/>
+        </TweaksPanel>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
