@@ -1,8 +1,8 @@
 /* global React, Icon, Badge, Button, Eyebrow */
 
-function CampaignsList({ onSubmit }){
+function CampaignsList({ onSubmit, onOpenBrief }){
   const campaigns = [
-    {name:"Rizz — AI dating replies", tag:"Dating · Lifestyle", rpm:1.00, min:10000, status:"joined", brief:"Hook within 2s. Use the 'POV: texting back' format. End with app download CTA + tracking link.", tint:"linear-gradient(135deg,#6366f1,#ec4899)"},
+    {name:"Rizz — AI dating replies", tag:"Dating · Lifestyle", rpm:1.00, min:1000, status:"joined", brief:"Hook within 2s. Use the 'POV: texting back' format. End with app download CTA + tracking link.", tint:"linear-gradient(135deg,#6366f1,#ec4899)"},
     {name:"Campaign slot #2", tag:"Launching soon", rpm:null, min:null, status:"soon", brief:"", tint:"linear-gradient(135deg,#2C2C2A,#1A1A18)"},
   ];
   return (
@@ -31,7 +31,12 @@ function CampaignsList({ onSubmit }){
                   </div>
                   <div style={{fontSize:13,color:"#6E6D66",marginTop:4}}>{c.tag}</div>
                 </div>
-                {c.status==="joined" && <Button variant="lime" size="md" icon={<Icon name="arrow" size={14}/>} onClick={onSubmit}>Submit clip</Button>}
+                {c.status==="joined" && (
+                  <div style={{display:"flex",gap:8}}>
+                    <Button variant="ghost" size="md" onClick={onOpenBrief}>View brief</Button>
+                    <Button variant="lime" size="md" icon={<Icon name="arrow" size={14}/>} onClick={onSubmit}>Submit clip</Button>
+                  </div>
+                )}
               </div>
               {c.brief && <p style={{fontSize:13,color:"#4A4A45",margin:"14px 0 0",lineHeight:1.55,maxWidth:680}}>{c.brief}</p>}
               <div style={{display:"flex",gap:28,marginTop:18,paddingTop:16,borderTop:"1px solid #F4F4F3"}}>

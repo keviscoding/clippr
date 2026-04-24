@@ -31,7 +31,9 @@
 <script type="text/babel" src="src/marketing/PayoutTicker.jsx"></script>
 <script type="text/babel" src="src/marketing/HowItWorks.jsx"></script>
 <script type="text/babel" src="src/marketing/CampaignGrid.jsx"></script>
+<script type="text/babel" src="src/marketing/FounderVideo.jsx"></script>
 <script type="text/babel" src="src/marketing/ProofSection.jsx"></script>
+<script type="text/babel" src="src/marketing/Faq.jsx"></script>
 <script type="text/babel" src="src/marketing/CtaFooter.jsx"></script>
 <script type="text/babel" src="src/marketing/AuthModal.jsx"></script>
 
@@ -39,6 +41,7 @@
 <script type="text/babel" src="src/clipper/Sidebar.jsx"></script>
 <script type="text/babel" src="src/clipper/EarningsOverview.jsx"></script>
 <script type="text/babel" src="src/clipper/CampaignsList.jsx"></script>
+<script type="text/babel" src="src/clipper/BriefDetail.jsx"></script>
 <script type="text/babel" src="src/clipper/PayoutsPanel.jsx"></script>
 <script type="text/babel" src="src/clipper/SubmitClipModal.jsx"></script>
 
@@ -65,19 +68,31 @@
   function ClipperApp(){
     const [view, setView] = useState("overview");
     const [submitOpen, setSubmitOpen] = useState(false);
+    const [briefOpen, setBriefOpen] = useState(false);
     const clips = [
       {title:"POV: texting her back like this", handle:"@rizz.clips.daily",  campaign:"Rizz", status:"approved", views:124820, earned:124.82, thumb:"linear-gradient(135deg,#6366f1,#ec4899)"},
       {title:"Guys, use THIS reply for cold openers",  handle:"@rizz.clips.daily", campaign:"Rizz", status:"approved", views: 82194, earned:82.19,  thumb:"linear-gradient(135deg,#3b82f6,#10b981)"},
       {title:"Stop texting 'hey' — try THIS", handle:"@rizz.clips.daily", campaign:"Rizz", status:"pending", views: 12402, earned:0, thumb:"linear-gradient(135deg,#f59e0b,#ef4444)"},
       {title:"She left me on read. Here's my comeback.", handle:"@rizz.clips.daily", campaign:"Rizz", status:"approved", views: 42058, earned:42.05, thumb:"linear-gradient(135deg,#4ADE80,#0ea5e9)"},
     ];
+    if (briefOpen) {
+      return (
+        <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
+          <Sidebar view={view} setView={(v)=>{setBriefOpen(false); setView(v);}}/>
+          <div>
+            <BriefDetail onBack={()=>setBriefOpen(false)} onSubmit={()=>setSubmitOpen(true)}/>
+          </div>
+          <SubmitClipModal open={submitOpen} onClose={()=>setSubmitOpen(false)}/>
+        </div>
+      );
+    }
     return (
       <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
         <Sidebar view={view} setView={setView}/>
         <div>
           <Topbar onSubmit={()=>setSubmitOpen(true)}/>
           {view==="overview"  && <EarningsOverview clips={clips}/>}
-          {view==="campaigns" && <CampaignsList onSubmit={()=>setSubmitOpen(true)}/>}
+          {view==="campaigns" && <CampaignsList onSubmit={()=>setSubmitOpen(true)} onOpenBrief={()=>setBriefOpen(true)}/>}
           {view==="clips"     && <EarningsOverview clips={clips}/>}
           {view==="payouts"   && <PayoutsPanel/>}
         </div>
@@ -130,8 +145,10 @@
         <Hero onJoin={()=>openAuth("signup")} variant={heroVariant}/>
         {showTicker && <PayoutTicker/>}
         <HowItWorks/>
-        <CampaignGrid/>
+        <CampaignGrid onJoin={()=>openAuth("signup")}/>
+        <FounderVideo/>
         <ProofSection/>
+        <Faq/>
         <CtaFooter onJoin={()=>openAuth("signup")}/>
         <AuthModal
           open={auth.open} mode={auth.mode}

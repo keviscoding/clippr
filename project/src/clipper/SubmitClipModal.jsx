@@ -15,7 +15,7 @@ function SubmitClipModal({ open, onClose }){
           <button onClick={onClose} style={{background:"transparent",border:"none",cursor:"pointer",padding:4,color:"#6E6D66"}}><Icon name="x" size={20}/></button>
         </div>
         <p style={{fontSize:13,color:"#6E6D66",margin:"0 0 20px",lineHeight:1.5}}>
-          Public TikTok, Instagram Reels, or YouTube Shorts URL. We track views every 30 min.
+          Public TikTok, Instagram Reels, or YouTube Shorts URL. We track views every 30 min. Clips count toward earnings once they pass <b style={{color:"#0A0A0A"}}>1,000 views</b>.
         </p>
         <label style={{display:"flex",flexDirection:"column",gap:6,marginBottom:14}}>
           <span style={{fontFamily:"Geist Mono,monospace",fontSize:10,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6E6D66"}}>CLIP URL</span>

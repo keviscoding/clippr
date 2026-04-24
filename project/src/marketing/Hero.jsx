@@ -41,7 +41,7 @@ function Hero({ onJoin, variant="clip-post-paid" }) {
               <span style={{color:"#D4FF3A"}}>{v.line2}</span>
             </h1>
             <p style={{fontSize:18, color:"rgba(250,250,247,0.72)", marginTop:20, maxWidth:480, lineHeight:1.5}}>
-              Real campaigns from real apps. Post to your TikTok, track your views, get paid every Friday. No contracts, no minimums.
+              Real campaigns from real apps. Post to your TikTok, track your views, get paid every Friday. Cash out from $20 — no contracts, no gatekeeping.
             </p>
             <div style={{display:"flex",gap:10,marginTop:32,alignItems:"center"}}>
               <Button variant="primary" size="xl" pill onClick={onJoin} icon={<Icon name="arrow" size={16}/>}>Start earning</Button>

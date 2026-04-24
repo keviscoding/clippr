@@ -1,8 +1,8 @@
 /* global React, Eyebrow, Badge, Icon, Button */
 
-function CampaignGrid(){
+function CampaignGrid({ onJoin }){
   const campaigns = [
-    {name:"Rizz — AI dating replies", tag:"Dating · Lifestyle", rpm:"$1.00", minViews:"10K", budget:"$24K/mo remaining", hot:true, tint:"#6366f1"},
+    {name:"Rizz — AI dating replies", tag:"Dating · Lifestyle", rpm:"$1.00", minViews:"1K", budget:"$24K/mo remaining", hot:true, tint:"#6366f1"},
     {name:"Coming soon — Campaign #2", tag:"TBA", rpm:"—", minViews:"—", budget:"Launching soon", hot:false, tint:"#2C2C2A", soon:true},
   ];
   return (
@@ -31,7 +31,7 @@ function CampaignGrid(){
                   <MetaCell label="MIN VIEWS" value={c.minViews}/>
                   <MetaCell label="BUDGET" value={c.budget} small/>
                 </div>
-                <Button variant={c.soon?"secondary":"primary"} size="md">
+                <Button variant={c.soon?"secondary":"primary"} size="md" onClick={c.soon ? undefined : onJoin}>
                   {c.soon ? "Notify me" : "View brief"}
                 </Button>
               </div>
