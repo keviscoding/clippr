@@ -145,9 +145,17 @@ alter table campaigns enable row level security;
 alter table clips     enable row level security;
 alter table payouts   enable row level security;
 
+-- Helper: is the current request being made by an admin?
+-- security definer so it bypasses RLS when reading profiles,
+-- which avoids infinite recursion when policies on profiles
+-- need to check admin status.
+create or replace function is_current_user_admin() returns boolean as $$
+  select coalesce((select is_admin from public.profiles where id = auth.uid()), false);
+$$ language sql stable security definer set search_path = public;
+
 -- ----- profiles -----
 drop policy if exists "profiles self read" on profiles;
-create policy "profiles self read"  on profiles for select using (auth.uid() = id or exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "profiles self read"  on profiles for select using (auth.uid() = id or is_current_user_admin());
 
 drop policy if exists "profiles self upsert" on profiles;
 create policy "profiles self upsert" on profiles for insert with check (auth.uid() = id);
@@ -156,37 +164,37 @@ drop policy if exists "profiles self update" on profiles;
 create policy "profiles self update" on profiles for update using (auth.uid() = id);
 
 drop policy if exists "profiles admin update" on profiles;
-create policy "profiles admin update" on profiles for update using (exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "profiles admin update" on profiles for update using (is_current_user_admin());
 
 -- ----- campaigns -----
 drop policy if exists "campaigns public read live" on campaigns;
-create policy "campaigns public read live" on campaigns for select using (status = 'live' or exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "campaigns public read live" on campaigns for select using (status = 'live' or is_current_user_admin());
 
 drop policy if exists "campaigns admin write" on campaigns;
-create policy "campaigns admin write" on campaigns for all using (exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin)) with check (exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "campaigns admin write" on campaigns for all using (is_current_user_admin()) with check (is_current_user_admin());
 
 -- ----- clips -----
 drop policy if exists "clips self read" on clips;
-create policy "clips self read" on clips for select using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "clips self read" on clips for select using (auth.uid() = user_id or is_current_user_admin());
 
 drop policy if exists "clips self insert" on clips;
 create policy "clips self insert" on clips for insert with check (auth.uid() = user_id and status = 'pending');
 
 drop policy if exists "clips admin update" on clips;
-create policy "clips admin update" on clips for update using (exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "clips admin update" on clips for update using (is_current_user_admin());
 
 drop policy if exists "clips self delete pending" on clips;
 create policy "clips self delete pending" on clips for delete using (auth.uid() = user_id and status = 'pending');
 
 -- ----- payouts -----
 drop policy if exists "payouts self read" on payouts;
-create policy "payouts self read" on payouts for select using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "payouts self read" on payouts for select using (auth.uid() = user_id or is_current_user_admin());
 
 drop policy if exists "payouts self insert" on payouts;
 create policy "payouts self insert" on payouts for insert with check (auth.uid() = user_id and status = 'pending');
 
 drop policy if exists "payouts admin update" on payouts;
-create policy "payouts admin update" on payouts for update using (exists (select 1 from profiles p where p.id = auth.uid() and p.is_admin));
+create policy "payouts admin update" on payouts for update using (is_current_user_admin());
 
 -- ==========================================================
 -- Auto-create profile row on signup
