@@ -140,10 +140,13 @@ function Editor({ editing, setEditing, save, busy, errMsg, onCancel }){
         <Field label="Budget remaining ($)" type="number" step="1" value={editing.budget_remaining} onChange={v=>set("budget_remaining", v)}/>
       </Card>
 
-      <Card title="Content (advanced — paste JSON or one-per-line)">
+      <Card title="Examples carousel (YouTube / Shorts)">
+        <ExamplesEditor examples={editing.examples} onChange={v => set("examples", v)}/>
+      </Card>
+
+      <Card title="Content (one per line / paste JSON)">
         <Field label="Do (one per line)" multiline rows={4} value={asTextLines(editing.dos)} onChange={v=>set("dos", v)}/>
         <Field label="Don't (one per line)" multiline rows={4} value={asTextLines(editing.donts)} onChange={v=>set("donts", v)}/>
-        <Field label='Examples (JSON: [{"handle","views","hook","grad","url"}])' multiline rows={5} value={asJson(editing.examples)} onChange={v=>set("examples", v)}/>
         <Field label='Assets (JSON: [{"label","sub","url","kind","cta"}])' multiline rows={5} value={asJson(editing.assets)} onChange={v=>set("assets", v)}/>
       </Card>
     </div>
@@ -187,5 +190,87 @@ function Field({label, value, onChange, placeholder, type="text", multiline, row
   );
 }
 function inputStyle(){ return {height:40,padding:"0 12px",fontFamily:"Geist,sans-serif",fontSize:14,border:"1px solid #E8E6DF",borderRadius:10,background:"#fff",outline:"none"}; }
+
+function ExamplesEditor({ examples, onChange }){
+  // Accept array or string-with-JSON; normalize to array of rows
+  const list = Array.isArray(examples)
+    ? examples
+    : (typeof examples === "string" && examples.trim().startsWith("["))
+      ? (() => { try { return JSON.parse(examples); } catch { return []; } })()
+      : [];
+
+  const update = (next) => onChange(next);
+  const setRow = (i, patch) => update(list.map((r, idx) => idx === i ? { ...r, ...patch } : r));
+  const addRow = () => update([...list, { url: "", hook: "", handle: "", views: "" }]);
+  const removeRow = (i) => update(list.filter((_, idx) => idx !== i));
+  const moveUp = (i) => {
+    if (i === 0) return;
+    const next = [...list];
+    [next[i-1], next[i]] = [next[i], next[i-1]];
+    update(next);
+  };
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      <div style={{fontSize:13,color:"#6E6D66",lineHeight:1.5}}>
+        Add YouTube or YouTube Shorts URLs. The carousel on the brief page shows the thumbnail and plays the video in a popup when a clipper clicks.
+      </div>
+      {list.length === 0 && (
+        <div style={{padding:"16px 18px",background:"#FAFAF7",border:"1px dashed #E8E6DF",borderRadius:10,fontSize:13,color:"#6E6D66",textAlign:"center"}}>
+          No examples yet. Add one below.
+        </div>
+      )}
+      {list.map((r, i) => (
+        <ExampleRow key={i} row={r} index={i} count={list.length}
+                    onChange={p => setRow(i, p)}
+                    onRemove={() => removeRow(i)}
+                    onMoveUp={() => moveUp(i)}/>
+      ))}
+      <div>
+        <button type="button" onClick={addRow} style={{display:"inline-flex",alignItems:"center",gap:8,padding:"9px 14px",background:"#0A0A0A",color:"#FAFAF7",border:"none",borderRadius:10,fontFamily:"Geist,sans-serif",fontWeight:600,fontSize:13,cursor:"pointer"}}>
+          <Icon name="plus" size={14}/> Add YouTube example
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ExampleRow({ row, index, count, onChange, onRemove, onMoveUp }){
+  const id = api.youtubeId(row.url);
+  const thumb = id ? api.youtubeThumb(id) : null;
+  const isYt = !!id;
+  return (
+    <div style={{display:"grid",gridTemplateColumns:"96px 1fr auto",gap:14,padding:"12px",border:"1px solid #E8E6DF",borderRadius:12,background:"#fff",alignItems:"start"}} className="adm-edit-row">
+      <div style={{aspectRatio:"9/14",background:"#0A0A0A",borderRadius:8,overflow:"hidden",position:"relative"}}>
+        {thumb ? (
+          <img src={thumb} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+        ) : (
+          <div style={{position:"absolute",inset:0,display:"grid",placeItems:"center",color:"rgba(255,255,255,0.4)",fontSize:10,fontFamily:"Geist Mono,monospace",letterSpacing:"0.06em",textAlign:"center",padding:6}}>
+            paste<br/>YouTube<br/>URL
+          </div>
+        )}
+        {isYt && <div style={{position:"absolute",top:4,right:4,padding:"2px 5px",background:"rgba(255,0,0,0.92)",borderRadius:4,fontFamily:"Geist Mono,monospace",fontSize:8,color:"#fff",letterSpacing:"0.06em",fontWeight:600}}>{api.isYoutubeShorts(row.url)?"SHORTS":"YT"}</div>}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:8,minWidth:0}}>
+        <input value={row.url || ""} onChange={e => onChange({ url: e.target.value })} placeholder="https://www.youtube.com/shorts/… or /watch?v=…"
+               style={{height:38,padding:"0 12px",fontFamily:"Geist Mono,monospace",fontSize:12,border:"1px solid #E8E6DF",borderRadius:8,outline:"none"}}/>
+        <input value={row.hook || ""} onChange={e => onChange({ hook: e.target.value })} placeholder="Hook (overlay caption shown on the card)"
+               style={{height:38,padding:"0 12px",fontFamily:"Geist,sans-serif",fontSize:13,border:"1px solid #E8E6DF",borderRadius:8,outline:"none"}}/>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          <input value={row.handle || ""} onChange={e => onChange({ handle: e.target.value })} placeholder="@handle"
+                 style={{height:34,padding:"0 10px",fontFamily:"Geist Mono,monospace",fontSize:12,border:"1px solid #E8E6DF",borderRadius:8,outline:"none"}}/>
+          <input value={row.views || ""} onChange={e => onChange({ views: e.target.value })} placeholder="Views label (e.g. 1.2M)"
+                 style={{height:34,padding:"0 10px",fontFamily:"Geist Mono,monospace",fontSize:12,border:"1px solid #E8E6DF",borderRadius:8,outline:"none"}}/>
+        </div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+        {index > 0 && (
+          <button type="button" onClick={onMoveUp} title="Move up" style={{padding:"6px 10px",background:"#fff",border:"1px solid #E8E6DF",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:"Geist Mono,monospace"}}>↑</button>
+        )}
+        <button type="button" onClick={onRemove} title="Remove" style={{padding:"6px 10px",background:"transparent",color:"#B91C1C",border:"1px solid #FECACA",borderRadius:8,cursor:"pointer",fontSize:12,fontFamily:"Geist,sans-serif",fontWeight:600}}>Remove</button>
+      </div>
+    </div>
+  );
+}
 
 window.CampaignEditor = CampaignEditor;

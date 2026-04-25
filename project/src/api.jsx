@@ -237,6 +237,42 @@
     return "other";
   }
 
+  // Extract YouTube video id from any youtube/shorts/youtu.be URL.
+  function youtubeId(url){
+    if (!url) return null;
+    try {
+      const u = new URL(url);
+      const host = u.hostname.replace(/^www\./, "").toLowerCase();
+      if (host === "youtu.be") return u.pathname.slice(1).split("/")[0] || null;
+      if (host.endsWith("youtube.com") || host.endsWith("youtube-nocookie.com")) {
+        if (u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || null;
+        if (u.pathname.startsWith("/embed/"))  return u.pathname.split("/")[2] || null;
+        if (u.pathname === "/watch")           return u.searchParams.get("v");
+      }
+      return null;
+    } catch { return null; }
+  }
+  function isYoutubeShorts(url){ return /youtube\.com\/shorts\//i.test(url||""); }
+  function youtubeThumb(id){ return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null; }
+  function youtubeEmbed(id, { autoplay=true, mute=false } = {}){
+    if (!id) return null;
+    const params = new URLSearchParams({ autoplay: autoplay?"1":"0", mute: mute?"1":"0", playsinline:"1", rel:"0", modestbranding:"1" });
+    return `https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`;
+  }
+
+  // ---------- Campaign stats (admin-only / informational) ----------
+  async function getCampaignStats(campaignId){
+    const r = requireClient(); if (r) return r;
+    const { data, error } = await client.from("clips").select("user_id, status, views, earned").eq("campaign_id", campaignId);
+    if (error) return err(error);
+    const rows = data || [];
+    const clipperSet = new Set(rows.map(r => r.user_id));
+    const totalClips = rows.length;
+    const totalViews = rows.filter(r => r.status === "approved").reduce((s,r) => s + (r.views || 0), 0);
+    const totalEarned = rows.filter(r => r.status === "approved").reduce((s,r) => s + Number(r.earned || 0), 0);
+    return ok({ clipperCount: clipperSet.size, totalClips, totalViews, totalEarned });
+  }
+
   // Expose
   window.api = {
     isConfigured: !!client,
@@ -246,7 +282,7 @@
     // profile
     getMyProfile, updateMyProfile,
     // campaigns
-    listLiveCampaigns, listAllCampaigns, getCampaignBySlug, getCampaign, upsertCampaign,
+    listLiveCampaigns, listAllCampaigns, getCampaignBySlug, getCampaign, upsertCampaign, getCampaignStats,
     // clips
     submitClip, listMyClips, listPendingClips, listAllClips, reviewClip, updateClipViews,
     // balance
@@ -256,6 +292,6 @@
     // admin
     getAdminStats,
     // helpers
-    detectPlatform,
+    detectPlatform, youtubeId, isYoutubeShorts, youtubeThumb, youtubeEmbed,
   };
 })();

@@ -124,6 +124,25 @@
 
     /* Campaign editor row */
     .adm-edit-row         { grid-template-columns: 1fr !important; }
+
+    /* Clipper campaigns page — stack tint as banner, hide some stats */
+    .clp-camp-card-grid   { grid-template-columns: 1fr !important; }
+    .clp-camp-card-tint   { min-height: 72px !important; height: 72px !important; }
+    .clp-camp-card-body   { padding: 16px 18px !important; }
+    .clp-camp-card-head   { flex-direction: column !important; align-items: stretch !important; }
+    .clp-camp-card-cta    { width: 100% !important; }
+    .clp-camp-card-cta > * { flex: 1 1 0 !important; }
+    .clp-camp-card-brief  { font-size: 13px !important; margin: 10px 0 0 !important; }
+    .clp-camp-card-stats  { gap: 18px !important; margin-top: 14px !important; padding-top: 12px !important; }
+    .hide-mobile          { display: none !important; }
+
+    /* Brief admin info bar — stack on mobile */
+    .br-admin-bar         { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+    .br-admin-bar > div:first-child { grid-column: 1 / -1 !important; }
+
+    /* Examples carousel — narrower cards, fewer arrows */
+    .br-rail              { gap: 8px !important; padding: 0 2px 6px !important; }
+    .br-rail-arrow        { display: none !important; }
   }
 </style>
 </head>
@@ -228,7 +247,7 @@
         <div className="clp-shell" style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
           <Sidebar view={view} setView={(v)=>{setBriefOpen(false); setView(v);}} profile={profile} onSignOut={onSignOut}/>
           <div>
-            <BriefDetail campaign={activeCampaign} onBack={()=>setBriefOpen(false)} onSubmit={()=>{setSubmitOpen(true);}}/>
+            <BriefDetail campaign={activeCampaign} profile={profile} onBack={()=>setBriefOpen(false)} onSubmit={()=>{setSubmitOpen(true);}}/>
           </div>
           <SubmitClipModal open={submitOpen} onClose={()=>setSubmitOpen(false)} campaign={activeCampaign} onSubmitted={()=>{setSubmitOpen(false); bumpRefresh();}}/>
         </div>

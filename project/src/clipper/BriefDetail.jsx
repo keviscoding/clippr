@@ -1,11 +1,14 @@
 /* global React, Icon, Badge, Button, Eyebrow, api */
-const { useState: useStateBD, useEffect: useEffectBD } = React;
+const { useState: useStateBD, useEffect: useEffectBD, useRef: useRefBD } = React;
 
-function BriefDetail({ campaign, onBack, onSubmit }){
+function BriefDetail({ campaign, profile, onBack, onSubmit }){
   const [c, setC] = useStateBD(campaign || null);
   const [loading, setLoading] = useStateBD(!campaign);
   const [myClips, setMyClips] = useStateBD([]);
   const [recent, setRecent] = useStateBD([]);
+  const [adminStats, setAdminStats] = useStateBD(null);
+  const [playerOpen, setPlayerOpen] = useStateBD(null); // {url}
+  const isAdmin = !!(profile && profile.is_admin);
 
   useEffectBD(() => {
     let mounted = true;
@@ -22,9 +25,13 @@ function BriefDetail({ campaign, onBack, onSubmit }){
       if (!mounted) return;
       setMyClips((mc.error ? [] : mc.data).filter(x => camp && x.campaign_id === camp.id));
       setRecent(rec.error ? [] : rec.data);
+      if (isAdmin && camp) {
+        const s = await api.getCampaignStats(camp.id);
+        if (mounted && !s.error) setAdminStats(s.data);
+      }
     })();
     return () => { mounted = false; };
-  }, [campaign]);
+  }, [campaign, isAdmin]);
 
   if (loading) return <div style={{padding:28,fontSize:13,color:"#6E6D66"}}>Loading…</div>;
   if (!c) return <div style={{padding:28,fontSize:13,color:"#6E6D66"}}>Campaign not found.</div>;
@@ -38,6 +45,7 @@ function BriefDetail({ campaign, onBack, onSubmit }){
 
   return (
     <div style={{padding:"0 0 60px",background:"#FAFAF7",minHeight:"100vh"}}>
+      {playerOpen && <YoutubePlayerModal url={playerOpen.url} onClose={() => setPlayerOpen(null)}/>}
       <div className="br-banner" style={{position:"relative",height:200,background:`linear-gradient(135deg,${tint},#1a1a1a)`,overflow:"hidden"}}>
         <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18), transparent 50%)"}}/>
         <div style={{position:"relative",maxWidth:1100,margin:"0 auto",padding:"22px 28px",height:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",color:"#fff"}}>
@@ -62,6 +70,16 @@ function BriefDetail({ campaign, onBack, onSubmit }){
           <Button variant="lime" size="lg" icon={<Icon name="arrow" size={15}/>} onClick={onSubmit}>Submit clip</Button>
         </div>
 
+        {isAdmin && (
+          <div style={{marginTop:14,padding:"14px 18px",background:"#0A0A0A",color:"#FAFAF7",borderRadius:14,display:"grid",gridTemplateColumns:"auto 1fr 1fr 1fr 1fr",gap:18,alignItems:"center",flexWrap:"wrap"}} className="br-admin-bar">
+            <div style={{fontFamily:"Geist Mono,monospace",fontSize:9,letterSpacing:"0.1em",color:"#D4FF3A",fontWeight:600,padding:"4px 8px",background:"rgba(212,255,58,0.12)",borderRadius:6}}>ADMIN VIEW</div>
+            <AdminStat label="CLIPPERS" value={adminStats ? adminStats.clipperCount.toLocaleString() : "—"}/>
+            <AdminStat label="CLIPS" value={adminStats ? adminStats.totalClips.toLocaleString() : "—"}/>
+            <AdminStat label="VIEWS" value={adminStats ? adminStats.totalViews.toLocaleString() : "—"}/>
+            <AdminStat label="PAID OUT" value={adminStats ? `$${adminStats.totalEarned.toFixed(2)}` : "—"}/>
+          </div>
+        )}
+
         <div className="br-layout" style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:20,marginTop:20}}>
           <div style={{display:"flex",flexDirection:"column",gap:20}}>
             <Section title="What to make" eyebrow="THE BRIEF">
@@ -77,12 +95,10 @@ function BriefDetail({ campaign, onBack, onSubmit }){
             </Section>
 
             {examples.length > 0 && (
-              <Section title="Examples that went viral" eyebrow="USE AS INSPIRATION">
-                <div className="br-examples" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
-                  {examples.slice(0,4).map((e,i) => <ExampleCard key={i} {...e}/>)}
-                </div>
+              <Section title="Videos that are crushing it" eyebrow="USE AS INSPIRATION">
+                <ExamplesCarousel examples={examples} onPlay={(url) => setPlayerOpen({url})}/>
                 <div style={{fontSize:12,color:"#6E6D66",marginTop:14,fontFamily:"Geist Mono,monospace",letterSpacing:"0.02em"}}>
-                  · Replicate the structure, not the exact words. Duplicates are flagged.
+                  · Replicate the structure + hook, not the exact words. Duplicates get flagged.
                 </div>
               </Section>
             )}
@@ -198,19 +214,128 @@ function Section({title, eyebrow, children, tone}){
   );
 }
 
-function ExampleCard({handle,views,hook,grad,url}){
-  const card = (
-    <div style={{background:"#0A0A0A",borderRadius:12,overflow:"hidden",aspectRatio:"9/14",position:"relative",cursor: url ? "pointer" : "default",border:"1px solid #E8E6DF"}}>
-      <div style={{position:"absolute",inset:0,background:grad || "linear-gradient(160deg,#6366f1,#0a0a0a 70%)"}}/>
-      {views && <div style={{position:"absolute",top:8,left:8,padding:"3px 8px",background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",borderRadius:999,fontFamily:"Geist Mono,monospace",fontSize:10,color:"#fff",letterSpacing:"0.04em"}}>{views}</div>}
-      <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"10px",background:"linear-gradient(transparent,rgba(0,0,0,0.85))",color:"#fff"}}>
-        <div style={{fontSize:12,fontWeight:600,lineHeight:1.25,marginBottom:4}}>{hook}</div>
-        <div style={{fontFamily:"Geist Mono,monospace",fontSize:9,opacity:0.7,letterSpacing:"0.04em"}}>{handle}</div>
-      </div>
-      <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:38,height:38,borderRadius:999,background:"rgba(255,255,255,0.18)",backdropFilter:"blur(8px)",display:"grid",placeItems:"center",color:"#fff"}}>▶</div>
+function AdminStat({label, value}){
+  return (
+    <div>
+      <div style={{fontFamily:"Geist Mono,monospace",fontSize:9,letterSpacing:"0.08em",color:"rgba(250,250,247,0.55)"}}>{label}</div>
+      <div style={{fontFamily:"Geist Mono,monospace",fontSize:18,fontWeight:500,marginTop:2,color:"#FAFAF7",fontVariantNumeric:"tabular-nums"}}>{value}</div>
     </div>
   );
-  return url ? <a href={url} target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>{card}</a> : card;
+}
+
+function ExamplesCarousel({ examples, onPlay }){
+  const railRef = useRefBD(null);
+  const scroll = (dir) => {
+    if (!railRef.current) return;
+    const w = railRef.current.clientWidth;
+    railRef.current.scrollBy({ left: dir * Math.max(220, w * 0.6), behavior: "smooth" });
+  };
+  return (
+    <div style={{position:"relative"}}>
+      <div ref={railRef} className="br-rail" style={{
+        display:"flex", gap:10, overflowX:"auto", overflowY:"hidden",
+        scrollSnapType:"x mandatory", paddingBottom:6,
+        WebkitOverflowScrolling:"touch", scrollbarWidth:"thin",
+      }}>
+        {examples.map((e, i) => <ExampleCard key={i} ex={e} onPlay={onPlay}/>)}
+      </div>
+      <CarouselArrow dir={-1} onClick={() => scroll(-1)}/>
+      <CarouselArrow dir={ 1} onClick={() => scroll( 1)}/>
+    </div>
+  );
+}
+
+function CarouselArrow({ dir, onClick }){
+  const isLeft = dir < 0;
+  return (
+    <button onClick={onClick} aria-label={isLeft ? "Scroll left" : "Scroll right"} className="br-rail-arrow"
+            style={{
+              position:"absolute", top:"50%", transform:"translateY(-50%)",
+              [isLeft ? "left" : "right"]: -12,
+              width:36, height:36, borderRadius:999, border:"1px solid #E8E6DF",
+              background:"#fff", cursor:"pointer", boxShadow:"0 6px 20px rgba(10,10,10,0.12)",
+              display:"grid", placeItems:"center", color:"#0A0A0A",
+            }}>
+      <span style={{fontSize:18, lineHeight:1, transform: isLeft ? "rotate(180deg)" : "none"}}>›</span>
+    </button>
+  );
+}
+
+function ExampleCard({ ex, onPlay }){
+  const url = ex && ex.url;
+  const ytId = url ? api.youtubeId(url) : null;
+  const isYt = !!ytId;
+  const [imgOk, setImgOk] = useStateBD(true);
+  const thumbUrl = isYt ? api.youtubeThumb(ytId) : null;
+
+  const handleClick = (e) => {
+    if (!url) return;
+    if (isYt) { e.preventDefault(); onPlay && onPlay(url); }
+  };
+
+  return (
+    <a href={url || "#"} target="_blank" rel="noreferrer" onClick={handleClick} style={{
+      flex:"0 0 auto", width:170, scrollSnapAlign:"start", textDecoration:"none",
+    }}>
+      <div style={{
+        position:"relative", aspectRatio:"9/14", borderRadius:12, overflow:"hidden",
+        background:"#0A0A0A", border:"1px solid #E8E6DF", cursor: url ? "pointer" : "default",
+      }}>
+        {isYt && imgOk && thumbUrl ? (
+          <img src={thumbUrl} alt={ex.hook || ""} onError={() => setImgOk(false)}
+               style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+        ) : (
+          <div style={{position:"absolute",inset:0,background:ex.grad || "linear-gradient(160deg,#6366f1,#0a0a0a 70%)"}}/>
+        )}
+        {ex.views && (
+          <div style={{position:"absolute",top:8,left:8,padding:"3px 8px",background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",borderRadius:999,fontFamily:"Geist Mono,monospace",fontSize:10,color:"#fff",letterSpacing:"0.04em",fontWeight:500}}>
+            {ex.views}
+          </div>
+        )}
+        {isYt && (
+          <div style={{position:"absolute",top:8,right:8,padding:"3px 6px",background:"rgba(255,0,0,0.92)",borderRadius:5,fontFamily:"Geist Mono,monospace",fontSize:9,color:"#fff",letterSpacing:"0.06em",fontWeight:600}}>
+            {api.isYoutubeShorts(url) ? "SHORTS" : "YT"}
+          </div>
+        )}
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.85) 100%)"}}/>
+        {url && (
+          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:42,height:42,borderRadius:999,background:"rgba(255,255,255,0.92)",display:"grid",placeItems:"center",color:"#0A0A0A",boxShadow:"0 4px 14px rgba(0,0,0,0.4)"}}>
+            <span style={{fontSize:14,marginLeft:2}}>▶</span>
+          </div>
+        )}
+        <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"10px 12px",color:"#fff"}}>
+          {ex.hook && <div style={{fontSize:12,fontWeight:600,lineHeight:1.25,marginBottom:4,textShadow:"0 1px 4px rgba(0,0,0,0.6)"}}>{ex.hook}</div>}
+          {ex.handle && <div style={{fontFamily:"Geist Mono,monospace",fontSize:9,opacity:0.85,letterSpacing:"0.04em"}}>{ex.handle}</div>}
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function YoutubePlayerModal({ url, onClose }){
+  if (!url) return null;
+  const id = api.youtubeId(url);
+  const isShorts = api.isYoutubeShorts(url);
+  const src = api.youtubeEmbed(id, { autoplay: true, mute: false });
+  if (!id) return null;
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:120,background:"rgba(10,10,10,0.85)",backdropFilter:"blur(8px)",display:"grid",placeItems:"center",padding:20}}>
+      <div onClick={e => e.stopPropagation()} style={{
+        position:"relative",
+        width: isShorts ? "min(380px, 100%)" : "min(960px, 100%)",
+        aspectRatio: isShorts ? "9/16" : "16/9",
+        borderRadius:14, overflow:"hidden", background:"#000",
+        boxShadow:"0 30px 80px rgba(0,0,0,0.6)",
+      }}>
+        <iframe src={src} title="YouTube video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                style={{position:"absolute",inset:0,width:"100%",height:"100%",border:"none"}}/>
+      </div>
+      <button onClick={onClose} aria-label="Close"
+              style={{position:"fixed",top:18,right:18,width:40,height:40,borderRadius:999,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",color:"#fff",cursor:"pointer",fontSize:22,lineHeight:1}}>×</button>
+    </div>
+  );
 }
 
 function AssetRow({icon,label,sub,cta,url}){
