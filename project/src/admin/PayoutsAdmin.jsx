@@ -42,8 +42,8 @@ function PayoutsAdmin({ onChanged }){
   const totalPending = rows.filter(r => r.status === "pending" || r.status === "processing").reduce((s,r) => s + Number(r.amount||0), 0);
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end"}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end",flexWrap:"wrap",gap:12}}>
         <div>
           <Eyebrow>PAYOUTS</Eyebrow>
           <div style={{fontSize:24,fontWeight:600,letterSpacing:"-0.02em",marginTop:4}}>Process clipper payouts</div>
@@ -66,7 +66,7 @@ function PayoutsAdmin({ onChanged }){
           {tab === "pending" ? "No payout requests pending." : "No payouts yet."}
         </div>
       ) : (
-        <div style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden"}}>
+        <div className="clp-table-wrap" style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden"}}>
           <table style={{width:"100%",borderCollapse:"collapse"}}>
             <thead><tr>
               {["CLIPPER","AMOUNT","METHOD","DESTINATION","REQUESTED","STATUS","TXN / ACTION"].map(h => (

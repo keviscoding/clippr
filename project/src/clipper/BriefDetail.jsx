@@ -38,7 +38,7 @@ function BriefDetail({ campaign, onBack, onSubmit }){
 
   return (
     <div style={{padding:"0 0 60px",background:"#FAFAF7",minHeight:"100vh"}}>
-      <div style={{position:"relative",height:200,background:`linear-gradient(135deg,${tint},#1a1a1a)`,overflow:"hidden"}}>
+      <div className="br-banner" style={{position:"relative",height:200,background:`linear-gradient(135deg,${tint},#1a1a1a)`,overflow:"hidden"}}>
         <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18), transparent 50%)"}}/>
         <div style={{position:"relative",maxWidth:1100,margin:"0 auto",padding:"22px 28px",height:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",color:"#fff"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -47,13 +47,13 @@ function BriefDetail({ campaign, onBack, onSubmit }){
           </div>
           <div>
             <div style={{fontFamily:"Geist Mono,monospace",fontSize:11,letterSpacing:"0.08em",opacity:0.85,marginBottom:6}}>{(c.tag||"").toUpperCase()}</div>
-            <h1 style={{fontSize:38,fontWeight:600,letterSpacing:"-0.025em",margin:0,lineHeight:1.05}}>{c.name}</h1>
+            <h1 className="br-banner-h1" style={{fontSize:38,fontWeight:600,letterSpacing:"-0.025em",margin:0,lineHeight:1.05}}>{c.name}</h1>
           </div>
         </div>
       </div>
 
-      <div style={{maxWidth:1100,margin:"-32px auto 0",padding:"0 28px",position:"relative"}}>
-        <div style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:16,padding:"22px 26px",boxShadow:"0 6px 24px rgba(10,10,10,0.06)",display:"grid",gridTemplateColumns:"repeat(5,1fr) auto",gap:24,alignItems:"center"}}>
+      <div style={{maxWidth:1100,margin:"-32px auto 0",padding:"0 18px",position:"relative"}}>
+        <div className="br-statbar" style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:16,padding:"22px 26px",boxShadow:"0 6px 24px rgba(10,10,10,0.06)",display:"grid",gridTemplateColumns:"repeat(5,1fr) auto",gap:24,alignItems:"center"}}>
           <BriefStat label="RATE" value={`$${Number(c.rpm).toFixed(2)}`} sub="per 1K views"/>
           <BriefStat label="MIN VIEWS" value={(c.min_views||0).toLocaleString()} sub="per clip to count"/>
           <BriefStat label="PAYOUT FLOOR" value={`$${Number(c.payout_floor||20).toFixed(0)}`} sub="before withdrawal"/>
@@ -62,7 +62,7 @@ function BriefDetail({ campaign, onBack, onSubmit }){
           <Button variant="lime" size="lg" icon={<Icon name="arrow" size={15}/>} onClick={onSubmit}>Submit clip</Button>
         </div>
 
-        <div style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:20,marginTop:20}}>
+        <div className="br-layout" style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:20,marginTop:20}}>
           <div style={{display:"flex",flexDirection:"column",gap:20}}>
             <Section title="What to make" eyebrow="THE BRIEF">
               <p style={{fontSize:15,lineHeight:1.6,color:"#2C2C2A",margin:"0 0 14px",whiteSpace:"pre-wrap"}}>
@@ -78,7 +78,7 @@ function BriefDetail({ campaign, onBack, onSubmit }){
 
             {examples.length > 0 && (
               <Section title="Examples that went viral" eyebrow="USE AS INSPIRATION">
-                <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
+                <div className="br-examples" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
                   {examples.slice(0,4).map((e,i) => <ExampleCard key={i} {...e}/>)}
                 </div>
                 <div style={{fontSize:12,color:"#6E6D66",marginTop:14,fontFamily:"Geist Mono,monospace",letterSpacing:"0.02em"}}>
@@ -89,14 +89,14 @@ function BriefDetail({ campaign, onBack, onSubmit }){
 
             {(Array.isArray(c.assets) && c.assets.length > 0) && (
               <Section title="Assets" eyebrow="DOWNLOAD &amp; USE">
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                <div className="br-assets" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
                   {c.assets.map((a,i) => <AssetRow key={i} icon={a.kind === "audio" ? "play" : a.kind === "doc" ? "sparkle" : a.kind === "link" ? "link" : "upload"} label={a.label} sub={a.sub} cta={a.cta || "Open"} url={a.url}/>)}
                 </div>
               </Section>
             )}
 
             {(dos.length > 0 || donts.length > 0) && (
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+              <div className="br-section-pair" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
                 {dos.length > 0 && (
                   <Section title="Do" eyebrow="REQUIRED" tone="success">
                     <ul style={{margin:0,padding:"0 0 0 18px",fontSize:14,lineHeight:1.7,color:"#2C2C2A"}}>
@@ -115,7 +115,7 @@ function BriefDetail({ campaign, onBack, onSubmit }){
             )}
 
             <Section title="How you get paid" eyebrow="THE MATH">
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:18}}>
+              <div className="br-payout-steps" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:18}}>
                 <PayoutStepCard n="1" title="Post + track" body="Submit your URL. We track views via the platform's public data."/>
                 <PayoutStepCard n="2" title={`Hit ${(c.min_views||1000).toLocaleString()} views`} body={`Once a clip passes ${(c.min_views||1000).toLocaleString()} views and is approved, it counts toward your earnings at $${Number(c.rpm).toFixed(2)} per 1K.`}/>
                 <PayoutStepCard n="3" title={`Withdraw at $${Number(c.payout_floor||20).toFixed(0)}`} body={`Once your balance crosses $${Number(c.payout_floor||20).toFixed(0)}, request payout. Payments go out every Friday via PayPal or bank.`}/>
@@ -129,7 +129,7 @@ function BriefDetail({ campaign, onBack, onSubmit }){
             </Section>
           </div>
 
-          <div style={{display:"flex",flexDirection:"column",gap:16,position:"sticky",top:90,alignSelf:"start"}}>
+          <div className="br-sidebar" style={{display:"flex",flexDirection:"column",gap:16,position:"sticky",top:90,alignSelf:"start"}}>
             <div style={{background:"#0A0A0A",color:"#FAFAF7",borderRadius:16,padding:22}}>
               <div style={{fontFamily:"Geist Mono,monospace",fontSize:10,letterSpacing:"0.08em",color:"rgba(250,250,247,0.6)"}}>YOUR PROGRESS</div>
               <div style={{fontFamily:"Geist Mono,monospace",fontSize:28,fontWeight:500,color:"#D4FF3A",marginTop:6,fontVariantNumeric:"tabular-nums"}}>${myEarned.toFixed(2)}</div>

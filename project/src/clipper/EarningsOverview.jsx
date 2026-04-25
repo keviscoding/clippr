@@ -37,15 +37,15 @@ function EarningsOverview({ onSubmit }){
   if (loading) return <LoadingPanel/>;
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:20}}>
+      <div className="clp-kpi-row" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
         <Kpi label="EARNED · LIFETIME" value={`$${lifetimeEarned.toFixed(2)}`} sub={earnedThisWeek > 0 ? `+$${earnedThisWeek.toFixed(2)} this week` : "Approved earnings"} positive/>
         <Kpi label="TOTAL VIEWS" value={totalViews.toLocaleString()} sub={`Across ${clips.length} clip${clips.length===1?"":"s"}`}/>
         <Kpi label="APPROVED CLIPS" value={`${approved.length} / ${clips.length}`} sub={pending.length > 0 ? `${pending.length} pending review` : "Up to date"}/>
         <Kpi label="AVAILABLE" value={`$${available.toFixed(2)}`} sub={nextPayoutLine}/>
       </div>
 
-      <div style={{display:"grid",gridTemplateColumns:"1.5fr 1fr",gap:12}}>
+      <div className="clp-2col" style={{display:"grid",gridTemplateColumns:"1.5fr 1fr",gap:12}}>
         <div style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,padding:"20px 22px",boxShadow:"0 1px 2px rgba(10,10,10,0.03)"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:16}}>
             <div>
@@ -73,7 +73,7 @@ function EarningsOverview({ onSubmit }){
       {clips.length === 0 ? (
         <EmptyState onSubmit={onSubmit}/>
       ) : (
-        <div style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden"}}>
+        <div className="clp-table-wrap" style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden"}}>
           <div style={{padding:"16px 22px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #F4F4F3"}}>
             <div style={{fontSize:16,fontWeight:600}}>My clips</div>
             <Button variant="ghost" size="sm" onClick={onSubmit} icon={<Icon name="plus" size={13}/>}>New</Button>

@@ -63,8 +63,8 @@ function CampaignEditor({ onChanged }){
   if (editing) return <Editor editing={editing} setEditing={setEditing} save={save} busy={busy} errMsg={errMsg} onCancel={()=>setEditing(null)}/>;
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end"}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end",flexWrap:"wrap",gap:12}}>
         <div>
           <Eyebrow>CAMPAIGNS</Eyebrow>
           <div style={{fontSize:24,fontWeight:600,letterSpacing:"-0.02em",marginTop:4}}>Manage your campaigns</div>
@@ -106,8 +106,8 @@ function Editor({ editing, setEditing, save, busy, errMsg, onCancel }){
   const set = (k,v) => setEditing(e => ({...e, [k]: v}));
   const isNew = !editing.id;
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16,maxWidth:980}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end"}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16,maxWidth:980}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end",flexWrap:"wrap",gap:12}}>
         <div>
           <Eyebrow>{isNew ? "NEW CAMPAIGN" : "EDIT CAMPAIGN"}</Eyebrow>
           <div style={{fontSize:24,fontWeight:600,letterSpacing:"-0.02em",marginTop:4}}>{editing.name || "Untitled campaign"}</div>
@@ -168,7 +168,7 @@ function Card({title, children}){
   );
 }
 function Row({children}){
-  return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{children}</div>;
+  return <div className="adm-edit-row" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{children}</div>;
 }
 function Field({label, value, onChange, placeholder, type="text", multiline, rows=3, step, select, options}){
   return (

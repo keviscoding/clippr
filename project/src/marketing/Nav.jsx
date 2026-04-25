@@ -9,7 +9,7 @@ function Nav({ onJoin, onLogin }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <nav style={{
+    <nav className="m-nav" style={{
       position:"sticky", top:0, zIndex:50,
       display:"flex", alignItems:"center", justifyContent:"space-between",
       padding:"14px 32px",
@@ -20,13 +20,13 @@ function Nav({ onJoin, onLogin }) {
       transition:"all 200ms cubic-bezier(0.2,0.8,0.2,1)"
     }}>
       <Wordmark/>
-      <div style={{display:"flex",gap:28,alignItems:"center"}}>
+      <div className="m-nav-links" style={{display:"flex",gap:28,alignItems:"center"}}>
         {["Campaigns","How it works","Proof","FAQ"].map(l => (
           <a key={l} href={"#" + l.toLowerCase().replace(/\s/g,"-")} style={{fontSize:14,color:"rgba(250,250,247,0.75)",fontWeight:500}}>{l}</a>
         ))}
       </div>
       <div style={{display:"flex",gap:8,alignItems:"center"}}>
-        <Button variant="ghostDark" size="md" onClick={onLogin}><span style={{whiteSpace:"nowrap"}}>Log in</span></Button>
+        <span className="m-nav-secondary"><Button variant="ghostDark" size="md" onClick={onLogin}><span style={{whiteSpace:"nowrap"}}>Log in</span></Button></span>
         <Button variant="primary" size="md" onClick={onJoin} icon={<Icon name="arrow" size={15}/>}>Start earning</Button>
       </div>
     </nav>

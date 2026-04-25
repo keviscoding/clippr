@@ -2,12 +2,12 @@
 
 function FounderVideo(){
   return (
-    <section id="founder-video" style={{padding:"80px 32px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+    <section id="founder-video" className="m-section" style={{padding:"80px 32px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
       <div style={{maxWidth:1100,margin:"0 auto"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
+        <div className="m-fv-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
           <div>
             <Eyebrow>FROM THE FOUNDER</Eyebrow>
-            <h2 style={{fontSize:42,fontWeight:600,letterSpacing:"-0.025em",color:"#FAFAF7",margin:"10px 0 18px",lineHeight:1.05}}>
+            <h2 className="m-section-h2" style={{fontSize:42,fontWeight:600,letterSpacing:"-0.025em",color:"#FAFAF7",margin:"10px 0 18px",lineHeight:1.05}}>
               Two minutes from me<br/><span style={{color:"#D4FF3A"}}>before you join.</span>
             </h2>
             <p style={{fontSize:16,color:"rgba(250,250,247,0.7)",lineHeight:1.6,margin:"0 0 24px",maxWidth:460}}>

@@ -18,6 +18,113 @@
   .surface-wrap { animation: surfaceIn 320ms cubic-bezier(0.2,0.8,0.2,1); }
   @keyframes surfaceIn { from { opacity:0; transform: translateY(6px) } to { opacity:1; transform:none } }
   .splash { position:fixed; inset:0; display:grid; place-items:center; background:#0A0A0A; color:#FAFAF7; z-index:1000; font-family:Geist,sans-serif; }
+
+  /* ================================================================
+     Mobile overrides (≤ 760px). Desktop styles are inline in JSX;
+     these rules use !important to override the inline values, and
+     only target elements that opt in via classNames below.
+     ================================================================ */
+  @media (max-width: 760px) {
+    /* Marketing — section paddings */
+    .m-section            { padding-left: 18px !important; padding-right: 18px !important; padding-top: 56px !important; padding-bottom: 56px !important; }
+    .m-section-h2         { font-size: 32px !important; line-height: 1.08 !important; }
+    .m-eyebrow            { font-size: 10px !important; }
+
+    /* Nav — hide center links + secondary CTA, shrink padding */
+    .m-nav                { padding: 12px 16px !important; }
+    .m-nav-links          { display: none !important; }
+    .m-nav-secondary      { display: none !important; }
+
+    /* Hero — stack text + phone, smaller h1 */
+    .m-hero               { padding: 32px 18px 56px !important; }
+    .m-hero-grid          { grid-template-columns: 1fr !important; gap: 36px !important; }
+    .m-hero-h1            { font-size: 48px !important; }
+    .m-hero-sub           { font-size: 16px !important; }
+    .m-hero-stats         { gap: 22px !important; flex-wrap: wrap !important; }
+    .m-hero-cta-row       { flex-wrap: wrap !important; }
+    .m-hero-cta-row > *   { flex: 1 1 auto !important; }
+    .m-hero-phone-wrap    { justify-self: center !important; max-width: 280px !important; margin: 0 auto !important; }
+
+    /* HowItWorks / FounderVideo / ProofSection / CampaignGrid — stack to 1 col */
+    .m-grid-3, .m-grid-2  { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .m-section-head       { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+
+    /* CampaignGrid card padding tighter */
+    .m-camp-card-body     { padding: 18px !important; }
+
+    /* FounderVideo — keep video below text */
+    .m-fv-grid            { grid-template-columns: 1fr !important; gap: 28px !important; }
+
+    /* Proof — testimonials below founder card */
+    .m-proof-grid         { grid-template-columns: 1fr !important; }
+
+    /* FAQ */
+    .m-faq-h2             { font-size: 32px !important; }
+    .m-faq-cta            { flex-direction: column !important; align-items: stretch !important; text-align: left !important; }
+
+    /* CTA footer */
+    .m-cta-h2             { font-size: 32px !important; }
+
+    /* Auth modal */
+    .m-auth-card          { padding: 22px !important; max-width: 100% !important; border-radius: 16px !important; }
+
+    /* Dashboard shell — collapse sidebar to a horizontal scroll strip on top */
+    .clp-shell            { grid-template-columns: 1fr !important; }
+    .clp-sidebar          {
+      width: 100% !important; height: auto !important; min-height: 0 !important;
+      position: sticky !important; top: 0 !important;
+      flex-direction: row !important; overflow-x: auto !important;
+      padding: 10px 12px !important; gap: 6px !important;
+      border-right: none !important; border-bottom: 1px solid #E8E6DF !important;
+      align-items: center !important;
+    }
+    .clp-sidebar-logo     { padding: 4px 8px 4px 0 !important; flex-shrink: 0 !important; }
+    .clp-sidebar-item     { flex-shrink: 0 !important; padding: 7px 10px !important; font-size: 13px !important; }
+    .clp-sidebar-card     { display: none !important; }      /* hide the available-balance card on mobile */
+    .clp-sidebar-user     { margin-left: auto !important; flex-shrink: 0 !important; }
+    .clp-sidebar-user-name { display: none !important; }      /* save horizontal space */
+
+    /* Dashboard topbar tighter */
+    .clp-topbar           { padding: 12px 16px !important; }
+    .clp-topbar-title     { font-size: 16px !important; }
+
+    /* Dashboard sections — tighter padding */
+    .clp-page             { padding: 18px !important; }
+
+    /* KPI grids in dashboards */
+    .clp-kpi-row          { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .clp-kpi-row > *      { padding: 14px 16px !important; }
+
+    /* Two-column dashboard rows */
+    .clp-2col             { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+    /* Tables — make horizontally scrollable */
+    .clp-table-wrap       { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    .clp-table-wrap table { min-width: 640px !important; }
+
+    /* Brief detail */
+    .br-banner            { height: 160px !important; padding: 16px 18px !important; }
+    .br-banner-h1         { font-size: 28px !important; }
+    .br-statbar           { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; padding: 18px !important; }
+    .br-statbar > button, .br-statbar > a { grid-column: 1 / -1 !important; }
+    .br-layout            { grid-template-columns: 1fr !important; }
+    .br-sidebar           { position: static !important; }
+    .br-section-pair      { grid-template-columns: 1fr !important; }
+    .br-examples          { grid-template-columns: repeat(2, 1fr) !important; }
+    .br-assets            { grid-template-columns: 1fr !important; }
+    .br-payout-steps      { grid-template-columns: 1fr !important; }
+    .br-back              { padding: 18px 18px 0 !important; }
+
+    /* Submit clip modal */
+    .clp-modal-card       { padding: 22px !important; max-width: 100% !important; border-radius: 16px !important; }
+
+    /* Review queue rows */
+    .adm-review-row       { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .adm-review-actions   { width: 100% !important; }
+
+    /* Campaign editor row */
+    .adm-edit-row         { grid-template-columns: 1fr !important; }
+  }
 </style>
 </head>
 <body class="payload-dark" data-world="dark">
@@ -118,7 +225,7 @@
 
     if (briefOpen) {
       return (
-        <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
+        <div className="clp-shell" style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
           <Sidebar view={view} setView={(v)=>{setBriefOpen(false); setView(v);}} profile={profile} onSignOut={onSignOut}/>
           <div>
             <BriefDetail campaign={activeCampaign} onBack={()=>setBriefOpen(false)} onSubmit={()=>{setSubmitOpen(true);}}/>
@@ -128,7 +235,7 @@
       );
     }
     return (
-      <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
+      <div className="clp-shell" style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
         <Sidebar view={view} setView={setView} profile={profile} onSignOut={onSignOut}/>
         <div>
           <Topbar onSubmit={()=>onSubmitFor(null)} profile={profile}/>
@@ -174,7 +281,7 @@
     }, [refreshKey]);
 
     return (
-      <div style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
+      <div className="clp-shell" style={{display:"grid",gridTemplateColumns:"240px 1fr",minHeight:"100vh",background:"#FAFAF7",color:"#0A0A0A"}}>
         <AdminSidebar view={view} setView={setView} profile={profile} onSignOut={onSignOut}/>
         <div>
           <AdminTopbar stats={stats} profile={profile}/>

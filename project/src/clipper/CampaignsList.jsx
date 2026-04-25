@@ -21,7 +21,7 @@ function CampaignsList({ onSubmit, onOpenBrief }){
   if (loading) return <div style={{padding:28,fontSize:13,color:"#6E6D66"}}>Loading…</div>;
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
           <Eyebrow>CAMPAIGNS</Eyebrow>
@@ -62,7 +62,7 @@ function CampaignsList({ onSubmit, onOpenBrief }){
                   </div>
                 </div>
                 {c.brief_md && <p style={{fontSize:13,color:"#4A4A45",margin:"14px 0 0",lineHeight:1.55,maxWidth:680}}>{c.brief_md}</p>}
-                <div style={{display:"flex",gap:28,marginTop:18,paddingTop:16,borderTop:"1px solid #F4F4F3"}}>
+                <div style={{display:"flex",gap:28,marginTop:18,paddingTop:16,borderTop:"1px solid #F4F4F3",flexWrap:"wrap"}}>
                   <MiniStat label="RPM" value={`$${Number(c.rpm).toFixed(2)}`}/>
                   <MiniStat label="MIN VIEWS" value={(c.min_views||0).toLocaleString()}/>
                   <MiniStat label="YOUR CLIPS" value={myForC.length.toString()}/>

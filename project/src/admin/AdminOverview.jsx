@@ -3,8 +3,8 @@
 function AdminOverview({ stats }){
   const s = stats || {};
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:20}}>
+      <div className="clp-kpi-row" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
         <Kpi label="TOTAL PAID · LIFETIME" value={`$${(s.totalPaid||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`} sub="To clippers" positive/>
         <Kpi label="VIEWS DELIVERED" value={(s.totalViews||0).toLocaleString()} sub="Across approved clips"/>
         <Kpi label="ACTIVE CLIPPERS" value={(s.totalClippers||0).toLocaleString()} sub="Profiles created"/>

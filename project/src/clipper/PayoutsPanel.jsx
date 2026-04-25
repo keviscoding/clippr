@@ -42,8 +42,8 @@ function PayoutsPanel({ profile, onChanged }){
   if (loading) return <div style={{padding:28,fontSize:13,color:"#6E6D66"}}>Loading…</div>;
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
+      <div className="clp-2col" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
         <div style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,padding:22}}>
           <Eyebrow>PAYOUT METHOD</Eyebrow>
           {method ? (
@@ -79,7 +79,7 @@ function PayoutsPanel({ profile, onChanged }){
         </div>
       </div>
 
-      <div style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden"}}>
+      <div className="clp-table-wrap" style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden"}}>
         <div style={{padding:"14px 22px",borderBottom:"1px solid #F4F4F3",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div style={{fontSize:15,fontWeight:600}}>Payout history</div>
           <div style={{fontFamily:"Geist Mono,monospace",fontSize:12,color:"#6E6D66"}}>Total lifetime: ${lifetimePaid.toFixed(2)}</div>

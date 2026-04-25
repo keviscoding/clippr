@@ -2,14 +2,14 @@
 
 function ProofSection(){
   return (
-    <section id="proof" style={{padding:"80px 32px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+    <section id="proof" className="m-section" style={{padding:"80px 32px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}>
         <Eyebrow>BEHIND THE PAYOUTS</Eyebrow>
-        <h2 style={{fontSize:44,fontWeight:600,letterSpacing:"-0.025em",color:"#FAFAF7",margin:"10px 0 48px",lineHeight:1.05,maxWidth:780}}>
+        <h2 className="m-section-h2" style={{fontSize:44,fontWeight:600,letterSpacing:"-0.025em",color:"#FAFAF7",margin:"10px 0 48px",lineHeight:1.05,maxWidth:780}}>
           Run by a creator who's done this at scale —<br/><span style={{color:"#D4FF3A"}}>not a faceless agency.</span>
         </h2>
 
-        <div style={{display:"grid",gridTemplateColumns:"1.1fr 1fr",gap:16,marginBottom:16}}>
+        <div className="m-proof-grid" style={{display:"grid",gridTemplateColumns:"1.1fr 1fr",gap:16,marginBottom:16}}>
           {/* Kevis card */}
           <div style={{background:"linear-gradient(180deg,#141414,#0E0E0E)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20,padding:28,boxShadow:"inset 0 1px 0 rgba(255,255,255,0.08)"}}>
             <div style={{display:"flex",gap:20,alignItems:"center",marginBottom:24}}>

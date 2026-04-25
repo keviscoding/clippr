@@ -49,7 +49,7 @@ function SettingsPanel({ profile, onSaved }){
   };
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16,maxWidth:760}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16,maxWidth:760}}>
       <div>
         <Eyebrow>SETTINGS</Eyebrow>
         <div style={{fontSize:24,fontWeight:600,letterSpacing:"-0.02em",marginTop:4}}>Your account &amp; payouts</div>

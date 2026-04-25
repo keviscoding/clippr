@@ -7,13 +7,13 @@ function HowItWorks(){
     {n:"03", icon:"dollar", title:"Get paid Fridays", body:"Views roll in, earnings tick up. Request payouts to PayPal or bank — sent every Friday."},
   ];
   return (
-    <section id="how-it-works" style={{padding:"80px 32px", borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+    <section id="how-it-works" className="m-section" style={{padding:"80px 32px", borderTop:"1px solid rgba(255,255,255,0.06)"}}>
       <div style={{maxWidth:1200, margin:"0 auto"}}>
         <Eyebrow>HOW IT WORKS</Eyebrow>
-        <h2 style={{fontSize:44, fontWeight:600, letterSpacing:"-0.025em", color:"#FAFAF7", margin:"10px 0 48px", maxWidth:680, lineHeight:1.05}}>
+        <h2 className="m-section-h2" style={{fontSize:44, fontWeight:600, letterSpacing:"-0.025em", color:"#FAFAF7", margin:"10px 0 48px", maxWidth:680, lineHeight:1.05}}>
           Three steps between you and <span style={{color:"#D4FF3A"}}>your first payout.</span>
         </h2>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14}}>
+        <div className="m-grid-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14}}>
           {steps.map(s => (
             <div key={s.n} style={{background:"#121212",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20,padding:"28px 26px",boxShadow:"inset 0 1px 0 rgba(255,255,255,0.06)"}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:36}}>

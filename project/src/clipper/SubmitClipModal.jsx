@@ -38,7 +38,7 @@ function SubmitClipModal({ open, onClose, campaign, onSubmitted }){
 
   return (
     <div style={{position:"fixed",inset:0,zIndex:100,background:"rgba(10,10,10,0.5)",backdropFilter:"blur(6px)",display:"grid",placeItems:"center",padding:20}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:480,background:"#fff",borderRadius:20,padding:28,boxShadow:"0 32px 80px rgba(10,10,10,0.2)"}}>
+      <div onClick={e=>e.stopPropagation()} className="clp-modal-card" style={{width:"100%",maxWidth:480,background:"#fff",borderRadius:20,padding:28,boxShadow:"0 32px 80px rgba(10,10,10,0.2)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:14}}>
           <div>
             <Eyebrow>SUBMIT CLIP{camp ? " · " + (camp.name||"").toUpperCase() : ""}</Eyebrow>

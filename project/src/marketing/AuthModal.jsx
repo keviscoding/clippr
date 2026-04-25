@@ -43,7 +43,7 @@ function AuthModal({ open, mode="signup", onClose, onSwitch, onSuccess }){
 
   return (
     <div style={{position:"fixed",inset:0,zIndex:100,background:"rgba(10,10,10,0.65)",backdropFilter:"blur(6px)",display:"grid",placeItems:"center",padding:20}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:440,background:"#121212",border:"1px solid rgba(255,255,255,0.1)",borderRadius:20,padding:32,boxShadow:"0 32px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)",color:"#FAFAF7"}}>
+      <div onClick={e=>e.stopPropagation()} className="m-auth-card" style={{width:"100%",maxWidth:440,background:"#121212",border:"1px solid rgba(255,255,255,0.1)",borderRadius:20,padding:32,boxShadow:"0 32px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)",color:"#FAFAF7"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:20}}>
           <LogoMark size={36}/>
           <button onClick={onClose} style={{background:"transparent",border:"none",color:"rgba(250,250,247,0.6)",cursor:"pointer",fontSize:22,lineHeight:1,padding:4}}>×</button>

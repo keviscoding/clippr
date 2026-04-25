@@ -47,11 +47,11 @@ const QA = [
 function Faq(){
   const [open, setOpen] = useStateFaq(0);
   return (
-    <section id="faq" style={{padding:"80px 32px", borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+    <section id="faq" className="m-section" style={{padding:"80px 32px", borderTop:"1px solid rgba(255,255,255,0.06)"}}>
       <div style={{maxWidth:880, margin:"0 auto"}}>
         <div style={{textAlign:"center",marginBottom:48}}>
           <Eyebrow>FAQ</Eyebrow>
-          <h2 style={{fontSize:44,fontWeight:600,letterSpacing:"-0.025em",color:"#FAFAF7",margin:"10px 0 0",lineHeight:1.05}}>
+          <h2 className="m-faq-h2" style={{fontSize:44,fontWeight:600,letterSpacing:"-0.025em",color:"#FAFAF7",margin:"10px 0 0",lineHeight:1.05}}>
             Everything you'll wonder<br/>before you start.
           </h2>
         </div>
@@ -79,7 +79,7 @@ function Faq(){
             );
           })}
         </div>
-        <div style={{marginTop:32,padding:"22px 26px",background:"rgba(212,255,58,0.06)",border:"1px solid rgba(212,255,58,0.2)",borderRadius:14,display:"flex",justifyContent:"space-between",alignItems:"center",gap:18,flexWrap:"wrap"}}>
+        <div className="m-faq-cta" style={{marginTop:32,padding:"22px 26px",background:"rgba(212,255,58,0.06)",border:"1px solid rgba(212,255,58,0.2)",borderRadius:14,display:"flex",justifyContent:"space-between",alignItems:"center",gap:18,flexWrap:"wrap"}}>
           <div>
             <div style={{fontSize:16,fontWeight:600,color:"#FAFAF7"}}>Still have questions?</div>
             <div style={{fontSize:13,color:"rgba(250,250,247,0.65)",marginTop:3}}>The campaign Discord is the fastest way — replies within 1–2 hours.</div>

@@ -52,8 +52,8 @@ function ReviewQueue({ onChanged }){
   };
 
   return (
-    <div style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end"}}>
+    <div className="clp-page" style={{padding:28,display:"flex",flexDirection:"column",gap:16}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"end",flexWrap:"wrap",gap:12}}>
         <div>
           <Eyebrow>REVIEW QUEUE</Eyebrow>
           <div style={{fontSize:24,fontWeight:600,letterSpacing:"-0.02em",marginTop:4}}>{tab==="pending" ? "Approve / reject submitted clips" : "All clip submissions"}</div>
@@ -78,7 +78,7 @@ function ReviewQueue({ onChanged }){
             const pr = c.profiles || {};
             const tone = c.status === "approved" ? "approved" : c.status === "rejected" ? "rejected" : "pending";
             return (
-              <div key={c.id} style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,padding:18,display:"grid",gridTemplateColumns:"56px 1fr 240px",gap:16,alignItems:"start"}}>
+              <div key={c.id} className="adm-review-row" style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,padding:18,display:"grid",gridTemplateColumns:"56px 1fr 240px",gap:16,alignItems:"start"}}>
                 <div style={{width:48,height:64,borderRadius:8,background:`linear-gradient(135deg, ${camp.tint||"#6366f1"}, #1a1a1a)`,display:"grid",placeItems:"center",color:"#fff"}}>
                   <Icon name={c.platform==="tiktok"?"tiktok":c.platform==="youtube"?"youtube":"play"} size={18}/>
                 </div>
