@@ -97,6 +97,20 @@
     return error ? err(error) : ok(data);
   }
 
+  // ---------- Helper: attach profile rows to a list of records ----------
+  // Avoids relying on implicit FK joins (clips/payouts.user_id references
+  // auth.users, not profiles, so PostgREST can't embed profiles directly).
+  async function attachProfiles(rows, profileFields = "id, display_name, handle, paypal_email, country"){
+    if (!rows || rows.length === 0) return rows || [];
+    const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
+    if (userIds.length === 0) return rows;
+    const { data, error } = await client.from("profiles").select(profileFields).in("id", userIds);
+    if (error) return rows;
+    const map = {};
+    for (const p of (data || [])) map[p.id] = p;
+    return rows.map(r => ({ ...r, profiles: map[r.user_id] || null }));
+  }
+
   // ---------- Clips ----------
   async function submitClip({ campaignId, url, notes, platform }){
     const r = requireClient(); if (r) return r;
@@ -117,13 +131,17 @@
   }
   async function listPendingClips(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint), profiles!clips_user_id_fkey(display_name, handle)").eq("status", "pending").order("submitted_at", { ascending: false });
-    return error ? err(error) : ok(data || []);
+    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").eq("status", "pending").order("submitted_at", { ascending: false });
+    if (error) return err(error);
+    const withProfiles = await attachProfiles(data || []);
+    return ok(withProfiles);
   }
   async function listAllClips(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint), profiles!clips_user_id_fkey(display_name, handle)").order("submitted_at", { ascending: false }).limit(200);
-    return error ? err(error) : ok(data || []);
+    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").order("submitted_at", { ascending: false }).limit(200);
+    if (error) return err(error);
+    const withProfiles = await attachProfiles(data || []);
+    return ok(withProfiles);
   }
   async function reviewClip(id, { status, views, rejection_reason }){
     const r = requireClient(); if (r) return r;
@@ -175,18 +193,21 @@
   }
   async function listAllPayouts(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("payouts").select("*, profiles!payouts_user_id_fkey(display_name, handle, paypal_email)").order("requested_at", { ascending: false }).limit(200);
-    return error ? err(error) : ok(data || []);
+    const { data, error } = await client.from("payouts").select("*").order("requested_at", { ascending: false }).limit(200);
+    if (error) return err(error);
+    return ok(await attachProfiles(data || []));
   }
   async function listPendingPayouts(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("payouts").select("*, profiles!payouts_user_id_fkey(display_name, handle, paypal_email)").in("status", ["pending","processing"]).order("requested_at", { ascending: true });
-    return error ? err(error) : ok(data || []);
+    const { data, error } = await client.from("payouts").select("*").in("status", ["pending","processing"]).order("requested_at", { ascending: true });
+    if (error) return err(error);
+    return ok(await attachProfiles(data || []));
   }
   async function listRecentPaidPayouts(limit = 12){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("payouts").select("amount, paid_at, profiles!payouts_user_id_fkey(display_name, handle, country)").eq("status", "paid").order("paid_at", { ascending: false }).limit(limit);
-    return error ? err(error) : ok(data || []);
+    const { data, error } = await client.from("payouts").select("amount, paid_at, user_id").eq("status", "paid").order("paid_at", { ascending: false }).limit(limit);
+    if (error) return err(error);
+    return ok(await attachProfiles(data || [], "id, display_name, handle, country"));
   }
   async function processPayout(id, { status, txn_ref, notes }){
     const r = requireClient(); if (r) return r;
