@@ -43,9 +43,11 @@ function BriefDetail({ campaign, profile, onBack, onSubmit }){
   const donts = Array.isArray(c.donts) ? c.donts : [];
   const tint = c.tint || "#6366f1";
 
+  const guideUrl = (c.slug === "rizz") ? "/rizz-guide.html" : null;
+
   return (
     <div style={{padding:"0 0 60px",background:"#FAFAF7",minHeight:"100vh"}}>
-      {playerOpen && <YoutubePlayerModal url={playerOpen.url} onClose={() => setPlayerOpen(null)}/>}
+      {playerOpen && <VideoPlayerModal url={playerOpen.url} onClose={() => setPlayerOpen(null)}/>}
       <div className="br-banner" style={{position:"relative",height:200,background:`linear-gradient(135deg,${tint},#1a1a1a)`,overflow:"hidden"}}>
         <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18), transparent 50%)"}}/>
         <div style={{position:"relative",maxWidth:1100,margin:"0 auto",padding:"22px 28px",height:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",color:"#fff"}}>
@@ -82,6 +84,7 @@ function BriefDetail({ campaign, profile, onBack, onSubmit }){
 
         <div className="br-layout" style={{display:"grid",gridTemplateColumns:"1fr 320px",gap:20,marginTop:20}}>
           <div style={{display:"flex",flexDirection:"column",gap:20}}>
+            {guideUrl && <GuideBanner href={guideUrl}/>}
             <Section title="What to make" eyebrow="THE BRIEF">
               <p style={{fontSize:15,lineHeight:1.6,color:"#2C2C2A",margin:"0 0 14px",whiteSpace:"pre-wrap"}}>
                 {c.description || "Short-form clips for this campaign. See do's/don'ts below."}
@@ -261,17 +264,55 @@ function CarouselArrow({ dir, onClick }){
   );
 }
 
+function GuideBanner({ href }){
+  return (
+    <a href={href} target="_blank" rel="noreferrer" style={{
+      display:"block", textDecoration:"none", color:"inherit",
+      borderRadius:14, overflow:"hidden",
+      background:"linear-gradient(135deg, #0A0A0A 0%, #1A1A18 100%)",
+      border:"1px solid #2A2A27",
+      boxShadow:"0 6px 24px rgba(10,10,10,0.18)",
+    }}>
+      <div style={{
+        padding:"22px 24px",
+        display:"grid", gridTemplateColumns:"1fr auto", gap:18, alignItems:"center",
+      }} className="br-guide-grid">
+        <div>
+          <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"4px 9px",background:"rgba(212,255,58,0.12)",border:"1px solid rgba(212,255,58,0.3)",borderRadius:999,fontFamily:"Geist Mono,monospace",fontSize:10,color:"#D4FF3A",letterSpacing:"0.12em",fontWeight:600,marginBottom:10}}>
+            ★ READ FIRST · 5 MIN
+          </div>
+          <div style={{fontSize:20,fontWeight:600,letterSpacing:"-0.015em",color:"#FAFAF7",lineHeight:1.2}}>
+            The Creator Network — full editor guide
+          </div>
+          <div style={{fontSize:13,color:"rgba(250,250,247,0.65)",marginTop:6,lineHeight:1.55,maxWidth:540}}>
+            Format breakdown, payout tiers across all three platforms, the rules that get videos paid, and the cheat-code workflow. Read this before posting your first video.
+          </div>
+        </div>
+        <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"11px 16px",background:"#D4FF3A",color:"#0A0A0A",borderRadius:10,fontFamily:"Geist,sans-serif",fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>
+          Open guide →
+        </div>
+      </div>
+    </a>
+  );
+}
+
 function ExampleCard({ ex, onPlay }){
   const url = ex && ex.url;
   const ytId = url ? api.youtubeId(url) : null;
   const isYt = !!ytId;
+  const igCode = url ? api.instagramShortcode(url) : null;
+  const isIg = !!igCode;
+  const isPlayableInModal = isYt || isIg;
   const [imgOk, setImgOk] = useStateBD(true);
   const thumbUrl = isYt ? api.youtubeThumb(ytId) : null;
 
   const handleClick = (e) => {
     if (!url) return;
-    if (isYt) { e.preventDefault(); onPlay && onPlay(url); }
+    if (isPlayableInModal) { e.preventDefault(); onPlay && onPlay(url); }
   };
+
+  // Background: YouTube → real thumbnail. Instagram → branded gradient (IG locks down thumbs).
+  const igGradient = "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)";
 
   return (
     <a href={url || "#"} target="_blank" rel="noreferrer" onClick={handleClick} style={{
@@ -284,6 +325,16 @@ function ExampleCard({ ex, onPlay }){
         {isYt && imgOk && thumbUrl ? (
           <img src={thumbUrl} alt={ex.hook || ""} onError={() => setImgOk(false)}
                style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+        ) : isIg ? (
+          <>
+            <div style={{position:"absolute",inset:0,background:igGradient}}/>
+            <div style={{position:"absolute",inset:0,display:"grid",placeItems:"center",color:"rgba(255,255,255,0.95)",fontSize:36}}>
+              <span style={{display:"inline-block",width:42,height:42,borderRadius:10,border:"2.5px solid #fff",position:"relative"}}>
+                <span style={{position:"absolute",top:5,right:5,width:6,height:6,borderRadius:999,background:"#fff"}}/>
+                <span style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:18,height:18,borderRadius:999,border:"2.5px solid #fff"}}/>
+              </span>
+            </div>
+          </>
         ) : (
           <div style={{position:"absolute",inset:0,background:ex.grad || "linear-gradient(160deg,#6366f1,#0a0a0a 70%)"}}/>
         )}
@@ -295,6 +346,11 @@ function ExampleCard({ ex, onPlay }){
         {isYt && (
           <div style={{position:"absolute",top:8,right:8,padding:"3px 6px",background:"rgba(255,0,0,0.92)",borderRadius:5,fontFamily:"Geist Mono,monospace",fontSize:9,color:"#fff",letterSpacing:"0.06em",fontWeight:600}}>
             {api.isYoutubeShorts(url) ? "SHORTS" : "YT"}
+          </div>
+        )}
+        {isIg && (
+          <div style={{position:"absolute",top:8,right:8,padding:"3px 6px",background:"rgba(0,0,0,0.55)",backdropFilter:"blur(8px)",borderRadius:5,fontFamily:"Geist Mono,monospace",fontSize:9,color:"#fff",letterSpacing:"0.06em",fontWeight:600}}>
+            {api.isInstagramReel(url) ? "REEL" : "IG"}
           </div>
         )}
         <div style={{position:"absolute",inset:0,background:"linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.85) 100%)"}}/>
@@ -312,26 +368,42 @@ function ExampleCard({ ex, onPlay }){
   );
 }
 
-function YoutubePlayerModal({ url, onClose }){
+// Lightbox player — handles YouTube, YouTube Shorts, and Instagram reels/posts.
+function VideoPlayerModal({ url, onClose }){
   if (!url) return null;
-  const id = api.youtubeId(url);
-  const isShorts = api.isYoutubeShorts(url);
-  const src = api.youtubeEmbed(id, { autoplay: true, mute: false });
-  if (!id) return null;
+  const ytId = api.youtubeId(url);
+  const igCode = !ytId ? api.instagramShortcode(url) : null;
+
+  if (!ytId && !igCode) return null;
+
+  const isVertical = ytId
+    ? api.isYoutubeShorts(url)
+    : api.isInstagramReel(url);
+  const src = ytId
+    ? api.youtubeEmbed(ytId, { autoplay: true, mute: false })
+    : api.instagramEmbed(igCode);
+
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:120,background:"rgba(10,10,10,0.85)",backdropFilter:"blur(8px)",display:"grid",placeItems:"center",padding:20}}>
       <div onClick={e => e.stopPropagation()} style={{
         position:"relative",
-        width: isShorts ? "min(380px, 100%)" : "min(960px, 100%)",
-        aspectRatio: isShorts ? "9/16" : "16/9",
+        width: isVertical ? "min(380px, 100%)" : "min(960px, 100%)",
+        aspectRatio: isVertical ? "9/16" : "16/9",
         borderRadius:14, overflow:"hidden", background:"#000",
         boxShadow:"0 30px 80px rgba(0,0,0,0.6)",
       }}>
-        <iframe src={src} title="YouTube video"
+        <iframe src={src} title="Example video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
+                scrolling="no"
                 style={{position:"absolute",inset:0,width:"100%",height:"100%",border:"none"}}/>
       </div>
+      {igCode && (
+        <a href={url} target="_blank" rel="noreferrer"
+           style={{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",padding:"8px 14px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",color:"#fff",borderRadius:999,fontFamily:"Geist Mono,monospace",fontSize:11,textDecoration:"none",letterSpacing:"0.06em"}}>
+          OPEN IN INSTAGRAM ↗
+        </a>
+      )}
       <button onClick={onClose} aria-label="Close"
               style={{position:"fixed",top:18,right:18,width:40,height:40,borderRadius:999,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",color:"#fff",cursor:"pointer",fontSize:22,lineHeight:1}}>×</button>
     </div>

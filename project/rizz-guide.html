@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Creator Network — Uncapped Earning Opportunity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a09;
+    --bg-elevated: #131312;
+    --bg-card: #181816;
+    --border: #2a2a27;
+    --border-strong: #3a3a36;
+    --text: #f5f3ed;
+    --text-muted: #a09b8e;
+    --text-dim: #6b6760;
+    --money: #b8ff3d;
+    --money-glow: rgba(184, 255, 61, 0.18);
+    --danger: #ff4838;
+    --danger-glow: rgba(255, 72, 56, 0.15);
+    --amber: #ffb838;
+
+    --display: 'Bricolage Grotesque', system-ui, sans-serif;
+    --body: 'Geist', system-ui, sans-serif;
+    --mono: 'Geist Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Subtle grain texture overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: overlay;
+  }
+
+  ::selection { background: var(--money); color: var(--bg); }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* TOP STRIP */
+  .strip {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+  }
+  .strip-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .strip-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--money);
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 12px var(--money);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* HERO */
+  .hero {
+    padding: 100px 0 80px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    bottom: -200px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--money-glow) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+  }
+  .hero-meta span:first-child {
+    color: var(--money);
+  }
+  .hero-meta-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--money);
+    margin-bottom: 28px;
+    display: inline-block;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(56px, 9vw, 132px);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    font-stretch: 75%;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 2;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--money);
+    font-weight: 700;
+  }
+  .lede {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 2;
+  }
+  .lede strong { color: var(--text); font-weight: 500; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+  }
+  .hero-stat {
+    padding: 28px 24px;
+    border-right: 1px solid var(--border);
+  }
+  .hero-stat:last-child { border-right: none; }
+  .hero-stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .hero-stat-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .hero-stat-value.green { color: var(--money); }
+
+  /* SECTIONS */
+  section {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .section-num {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .section-num span:first-child {
+    color: var(--money);
+    font-weight: 600;
+  }
+  .section-num-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-stretch: 80%;
+    margin-bottom: 48px;
+    max-width: 900px;
+  }
+  h2 em {
+    font-style: italic;
+    color: var(--money);
+    font-weight: 700;
+  }
+  h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  p { color: var(--text-muted); font-size: 17px; }
+  p strong { color: var(--text); font-weight: 500; }
+
+  /* STOP FREELANCE */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .compare-card {
+    border: 1px solid var(--border);
+    padding: 36px;
+    position: relative;
+    background: var(--bg-elevated);
+  }
+  .compare-card.bad {
+    border-color: var(--border);
+    opacity: 0.7;
+  }
+  .compare-card.bad h3 {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--danger);
+    text-decoration-thickness: 2px;
+  }
+  .compare-card.good {
+    border-color: var(--money);
+    background: linear-gradient(180deg, rgba(184, 255, 61, 0.04) 0%, var(--bg-elevated) 60%);
+  }
+  .compare-tag {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    background: var(--money);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 6px 12px;
+  }
+  .compare-card ul {
+    list-style: none;
+    margin-top: 24px;
+  }
+  .compare-card li {
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .compare-card li::before {
+    content: "✕";
+    font-family: var(--mono);
+    color: var(--danger);
+    font-size: 14px;
+    width: 16px;
+  }
+  .compare-card.good li::before {
+    content: "→";
+    color: var(--money);
+    font-weight: 700;
+  }
+
+  .objection {
+    background: var(--bg-elevated);
+    border-left: 3px solid var(--money);
+    padding: 32px 36px;
+    margin-top: 56px;
+  }
+  .objection-q {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .objection-q::before {
+    content: "Q.";
+    color: var(--money);
+    font-family: var(--mono);
+    font-size: 14px;
+    margin-right: 12px;
+    vertical-align: super;
+  }
+  .objection-a {
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-top: 16px;
+  }
+  .objection-a + .objection-a { margin-top: 12px; }
+  .objection-highlight {
+    color: var(--money);
+    font-weight: 600;
+  }
+
+  /* WHAT YOU'RE MAKING */
+  .video-anatomy {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+  .anatomy-step {
+    padding: 40px 32px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .anatomy-step:last-child { border-right: none; }
+  .anatomy-step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--money);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 16px;
+  }
+  .anatomy-step h4 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .anatomy-step p { font-size: 15px; }
+  .anatomy-step .examples {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* GENERATOR */
+  .generator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .generator-visual {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .timer {
+    text-align: center;
+  }
+  .timer-strike {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 64px;
+    color: var(--text-dim);
+    text-decoration: line-through;
+    text-decoration-color: var(--danger);
+    text-decoration-thickness: 4px;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .timer-strike-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .timer-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+    margin: 32px auto;
+  }
+  .timer-new {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 96px;
+    color: var(--money);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 0 40px var(--money-glow);
+  }
+  .timer-new-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--money);
+  }
+  .generator-text h3 { margin-bottom: 24px; }
+  .generator-text p { margin-bottom: 20px; }
+  .sauce-box {
+    margin-top: 28px;
+    padding: 24px;
+    border: 1px dashed var(--border-strong);
+    background: rgba(184, 255, 61, 0.03);
+  }
+  .sauce-box p { color: var(--text); }
+  .sauce-box .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--money);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 8px;
+  }
+
+  /* PAYOUT TIERS */
+  .payout-intro {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: end;
+  }
+  .vs-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+  .vs-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+  .vs-row + .vs-row { border-top: 1px solid var(--border); }
+  .vs-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+  .vs-amount {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .vs-amount.them { color: var(--text-dim); text-decoration: line-through; }
+  .vs-amount.us { color: var(--money); }
+  .vs-multiplier {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--money);
+    letter-spacing: -0.02em;
+    background: rgba(184, 255, 61, 0.1);
+    padding: 4px 10px;
+    border: 1px solid var(--money);
+    border-radius: 2px;
+  }
+
+  .platforms {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .platform {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .platform-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .platform-name {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+  }
+  .platform-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .platform.youtube .platform-icon { background: #ff0033; color: white; }
+  .platform.instagram .platform-icon { background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; }
+  .platform.tiktok .platform-icon { background: #000; color: white; border: 1px solid var(--border-strong); }
+
+  .platform-algo {
+    padding: 20px 28px;
+    background: var(--bg-card);
+    font-size: 13px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .platform-algo strong { color: var(--text); font-weight: 500; }
+
+  .tier-list { padding: 12px 0; }
+  .tier {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  .tier:last-child { border-bottom: none; }
+  .tier:hover { background: rgba(184, 255, 61, 0.04); }
+  .tier-views {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+  .tier-payout {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--money);
+  }
+  .tier.first .tier-payout::after {
+    content: "EASY WIN";
+    display: inline-block;
+    margin-left: 8px;
+    font-family: var(--mono);
+    font-size: 9px;
+    background: var(--money);
+    color: var(--bg);
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .tier.bonus {
+    background: rgba(184, 255, 61, 0.06);
+  }
+  .tier.bonus .tier-payout { font-size: 24px; }
+
+  .volume-math {
+    margin-top: 56px;
+    padding: 36px 40px;
+    border: 1px solid var(--money);
+    background: linear-gradient(135deg, rgba(184, 255, 61, 0.06) 0%, transparent 80%);
+    position: relative;
+  }
+  .volume-math::before {
+    content: "DO THE MATH";
+    position: absolute;
+    top: -10px;
+    left: 32px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--money);
+    font-weight: 600;
+  }
+  .volume-math p {
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .volume-math strong {
+    color: var(--money);
+    font-weight: 600;
+  }
+
+  /* RULES */
+  .rules-warning {
+    background: var(--bg-elevated);
+    border: 1px solid var(--danger);
+    border-left: 4px solid var(--danger);
+    padding: 24px 28px;
+    margin-bottom: 56px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .rules-warning-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-family: var(--display);
+    font-size: 18px;
+  }
+  .rules-warning p {
+    color: var(--text);
+    font-size: 15px;
+  }
+  .rules-warning strong { color: var(--danger); }
+
+  .rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+  }
+  .rule {
+    padding: 36px 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .rule-num {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 56px;
+    line-height: 0.9;
+    color: var(--danger);
+    letter-spacing: -0.04em;
+  }
+  .rule-content h4 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .rule-content p {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .rule-content p + p { margin-top: 8px; }
+  .rule-content strong { color: var(--text); font-weight: 500; }
+  .rule-content .key-fact {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: var(--bg-elevated);
+    border-left: 2px solid var(--danger);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+  .rule-content .key-fact span {
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  /* PAYOUTS BAR */
+  .payouts-bar {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .payouts-bar h3 { margin-bottom: 12px; }
+  .payouts-bar p { font-size: 15px; }
+  .payments {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .payment-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .payment-row:last-child { border-bottom: none; }
+  .payment-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+  }
+  .payment-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .payment-value.placeholder {
+    color: var(--amber);
+    font-family: var(--mono);
+    font-size: 13px;
+    background: rgba(255, 184, 56, 0.1);
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 184, 56, 0.3);
+    border-radius: 2px;
+  }
+  .payment-methods {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .method-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--bg);
+    color: var(--text);
+    padding: 6px 12px;
+    border: 1px solid var(--border-strong);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* FINAL CTA */
+  .cta-section {
+    padding: 120px 0;
+    text-align: left;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 100%);
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -200px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--money-glow) 0%, transparent 65%);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    margin-bottom: 24px;
+  }
+  .cta-section .lede {
+    margin-bottom: 64px;
+  }
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: padding 0.2s ease;
+  }
+  .step:hover { padding-left: 16px; }
+  .step:hover .step-arrow { color: var(--money); transform: translateX(8px); }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--money);
+    letter-spacing: 0.16em;
+    font-weight: 600;
+  }
+  .step-text {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .step-text code {
+    font-family: var(--mono);
+    font-size: 16px;
+    background: var(--bg-elevated);
+    padding: 3px 8px;
+    border: 1px solid var(--border-strong);
+    color: var(--money);
+    font-weight: 500;
+  }
+  .step-arrow {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-dim);
+    transition: all 0.2s ease;
+  }
+
+  .signoff {
+    margin-top: 96px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .signoff-text {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(48px, 8vw, 96px);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--money);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* Back-to-app pill */
+  .back-pill {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 200;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(10,10,9,0.8);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    transition: all 160ms ease;
+  }
+  .back-pill:hover { border-color: var(--money); color: var(--money); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .container { padding: 0 24px; }
+    .compare-grid,
+    .video-anatomy,
+    .generator-grid,
+    .payout-intro,
+    .platforms,
+    .payouts-bar,
+    .hero-stats { grid-template-columns: 1fr; }
+    .hero-stats { grid-template-columns: 1fr 1fr; }
+    .hero-stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-stat:nth-child(2) { border-right: none; }
+    .anatomy-step,
+    .compare-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .anatomy-step:last-child { border-bottom: none; }
+    .timer-new { font-size: 72px; }
+    .timer-strike { font-size: 48px; }
+    .rule { grid-template-columns: 1fr; gap: 12px; }
+    .rule-num { font-size: 40px; }
+    .step { grid-template-columns: auto 1fr auto; gap: 16px; }
+    .step-text { font-size: 17px; }
+    section { padding: 64px 0; }
+    .hero { padding: 60px 0 48px; }
+    .platform-header { padding: 18px 22px; }
+    .platform-algo { padding: 16px 22px; }
+    .tier { padding: 12px 22px; }
+    .back-pill { top: 12px; left: 12px; padding: 7px 12px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+  <a href="/" class="back-pill">← Back to Cliprr</a>
+
+  <!-- TOP STRIP -->
+  <div class="strip">
+    <div class="container strip-inner">
+      <span><span class="strip-dot"></span>Network Open · Accepting Editors</span>
+      <span>Document v.4 / Confidential</span>
+      <span>Ref · CN-PAYOUT-2026</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-meta">
+        <span>● Live</span>
+        <span class="hero-meta-line"></span>
+        <span>The Creator Network</span>
+        <span class="hero-meta-line"></span>
+        <span>Uncapped Earning Opportunity</span>
+      </div>
+
+      <span class="eyebrow">A Program for Talented Video Editors</span>
+      <h1>Stop trading hours<br/>for client work.<br/><em>Start printing.</em></h1>
+      <p class="lede">
+        We don't want you to be just an editor. We want you to be a <strong>Growth Partner</strong>.
+        We provide the viral app, the templates, and a generator tool that does the heavy lifting.
+        You bring the special sauce — and we pay you directly, from <strong>Day 1</strong>,
+        on every video that hits the algorithm.
+      </p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-label">Pay Rate vs Native</div>
+          <div class="hero-stat-value green">4–5×</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Per Video Cap</div>
+          <div class="hero-stat-value">$1,250</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Minimum Threshold</div>
+          <div class="hero-stat-value">$5</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Account Limit</div>
+          <div class="hero-stat-value green">∞</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 -->
+  <section>
+    <div class="container">
+      <div class="section-num">
+        <span>01</span>
+        <span class="section-num-line"></span>
+        <span>The Pivot</span>
+      </div>
+      <h2>Freelance is a treadmill.<br/>This is an <em>elevator</em>.</h2>
+      <p class="lede" style="margin-bottom: 56px;">
+        If you're a talented editor, you already know the trap: hunt for clients,
+        wait for replies, eat endless revisions, and watch your income get capped
+        by your hourly rate. We built this network to break that cycle entirely.
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-card bad">
+          <h3>Traditional Client Work</h3>
+          <ul>
+            <li>Constantly hunting new clients</li>
+            <li>Waiting weeks for replies</li>
+            <li>Endless rounds of revisions</li>
+            <li>Income capped by your hourly rate</li>
+            <li>One missing client = no income</li>
+          </ul>
+        </div>
+        <div class="compare-card good">
+          <span class="compare-tag">The Network</span>
+          <h3>Creator Network</h3>
+          <ul>
+            <li>Zero client revisions, ever</li>
+            <li>Work whenever you want</li>
+            <li>Post infinite videos across infinite accounts</li>
+            <li>No ceiling on earnings</li>
+            <li>Paid directly per million views</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="objection">
+        <div class="objection-q">"Why don't I just post my own videos and get views that way?"</div>
+        <p class="objection-a">
+          Here's the reality: posting on your own means grinding for months — sometimes years —
+          risking time and money, just hoping you'll one day clear the strict thresholds for
+          YouTube or TikTok Creator Funds.
+        </p>
+        <p class="objection-a">
+          <span class="objection-highlight">We pay you from Day 1, out of the box.</span>
+          You don't wait to get monetized.
+        </p>
+        <p class="objection-a">
+          <strong style="color:var(--text);">And here's the cheat code:</strong> the accounts you build will eventually
+          hit native platform monetization too. When that happens, you stack them.
+          You collect <strong style="color:var(--money);">standard ad revenue from the platform AND our payouts</strong>
+          on the exact same videos. Two checks, one upload.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section>
+    <div class="container">
+      <div class="section-num">
+        <span>02</span>
+        <span class="section-num-line"></span>
+        <span>The Format</span>
+      </div>
+      <h2>Texting / rizz<br/>story videos.</h2>
+      <p class="lede" style="margin-bottom: 56px;">
+        Three layers stacked together. A high-retention background, an iMessage hook,
+        and the reveal where our app saves the conversation. Templates and assets
+        are dropped in our Discord.
+      </p>
+
+      <div class="video-anatomy">
+        <div class="anatomy-step">
+          <div class="anatomy-step-num">Layer 01 · Visuals</div>
+          <h4>The Background</h4>
+          <p>High-retention B-roll that holds the eyeball while the story unfolds underneath.</p>
+          <div class="examples">Basketball · GTA · Minecraft Parkour</div>
+        </div>
+        <div class="anatomy-step">
+          <div class="anatomy-step-num">Layer 02 · Story</div>
+          <h4>The Hook</h4>
+          <p>An engaging iMessage text overlay — the entire reason they keep watching.</p>
+          <div class="examples">Sliding into DMs · Tense Argument · Funny Rejection</div>
+        </div>
+        <div class="anatomy-step">
+          <div class="anatomy-step-num">Layer 03 · Payoff</div>
+          <h4>The Reveal</h4>
+          <p>Right as the conversation gets stuck, you cut to a screen recording of our app generating the perfect reply.</p>
+          <div class="examples">App Demo · CTA · Link in Bio</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section>
+    <div class="container">
+      <div class="section-num">
+        <span>03</span>
+        <span class="section-num-line"></span>
+        <span>The Cheat Code</span>
+      </div>
+      <h2>The In-House<br/><em>Generator Tool.</em></h2>
+
+      <div class="generator-grid">
+        <div class="generator-visual">
+          <div class="timer">
+            <div class="timer-strike">90 MIN</div>
+            <div class="timer-strike-label">Manual Old Way</div>
+            <div class="timer-divider"></div>
+            <div class="timer-new">2:00</div>
+            <div class="timer-new-label">With The Generator</div>
+          </div>
+        </div>
+
+        <div class="generator-text">
+          <h3>How you post infinite videos.</h3>
+          <p>
+            Faking a texting conversation manually takes forever — text a friend,
+            screenshot, crop, animate, sync. Hours per video. Burnout in a week.
+          </p>
+          <p>
+            One click in our exclusive generator and the software builds the full
+            texting conversation <em>and</em> the app-reveal screen recording for you.
+            Core assets in <strong>two minutes flat</strong>.
+          </p>
+
+          <div class="sauce-box">
+            <div class="label">★ The Special Sauce</div>
+            <p>
+              The base format alone gets solid views. But the editors who win are the ones
+              who add their own pacing, sound design, and visual hooks on top.
+              That's what forces the algorithm to push your video to millions —
+              and what unlocks <strong style="color:var(--money);">exclusive monthly bonuses
+              and special perks</strong> for top performers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section>
+    <div class="container">
+      <div class="section-num">
+        <span>04</span>
+        <span class="section-num-line"></span>
+        <span>Payout Tiers</span>
+      </div>
+      <h2>We pay <em>4–5×</em> more<br/>than the platforms.</h2>
+
+      <div class="payout-intro">
+        <div>
+          <p style="font-size: 17px; line-height: 1.65;">
+            Native platforms pay editors a disrespectful amount. YouTube Shorts hands out
+            <strong>$20–$50 per million views.</strong> TikTok pays <strong>$0</strong> for
+            videos under a minute. We bypass them entirely. Because our app's conversion rate
+            is so high, even early test-phase views make us money — and we pass it to you.
+          </p>
+        </div>
+        <div class="vs-card">
+          <div class="vs-row">
+            <span class="vs-label">Native (YT Shorts)</span>
+            <span class="vs-amount them">$20–$50 / 1M</span>
+          </div>
+          <div class="vs-row">
+            <span class="vs-label">Native (TikTok &lt;1m)</span>
+            <span class="vs-amount them">$0 / 1M</span>
+          </div>
+          <div class="vs-row">
+            <span class="vs-label">The Network</span>
+            <span class="vs-amount us">$250 / 1M Bonus</span>
+          </div>
+          <div class="vs-row">
+            <span class="vs-label">Multiplier</span>
+            <span class="vs-multiplier">4–5×</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="platforms">
+        <!-- YouTube -->
+        <div class="platform youtube">
+          <div class="platform-header">
+            <span class="platform-name">YouTube Shorts</span>
+            <span class="platform-icon">▶</span>
+          </div>
+          <div class="platform-algo">
+            <strong>The algorithm:</strong> auto-pushes test videos to 10K–30K viewers.
+            Other programs make you wait until you go insanely viral. We reward you the moment you hit the algo.
+          </div>
+          <div class="tier-list">
+            <div class="tier first">
+              <span class="tier-views">10K – 35K</span>
+              <span class="tier-payout">$5</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">35K – 100K</span>
+              <span class="tier-payout">$20</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">100K – 500K</span>
+              <span class="tier-payout">$60</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">500K – 1M</span>
+              <span class="tier-payout">$125</span>
+            </div>
+            <div class="tier bonus">
+              <span class="tier-views">1M+ Bonus</span>
+              <span class="tier-payout">$250 / 1M</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="platform instagram">
+          <div class="platform-header">
+            <span class="platform-name">Instagram Reels</span>
+            <span class="platform-icon">◉</span>
+          </div>
+          <div class="platform-algo">
+            <strong>The algorithm:</strong> strict. Average videos sit at 500 views.
+            Breaking 2K means the algo has picked you up — we reward you instantly for breaking out.
+          </div>
+          <div class="tier-list">
+            <div class="tier first">
+              <span class="tier-views">2K – 10K</span>
+              <span class="tier-payout">$5</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">10K – 50K</span>
+              <span class="tier-payout">$20</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">50K – 250K</span>
+              <span class="tier-payout">$60</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">250K – 1M</span>
+              <span class="tier-payout">$125</span>
+            </div>
+            <div class="tier bonus">
+              <span class="tier-views">1M+ Bonus</span>
+              <span class="tier-payout">$250 / 1M</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TikTok -->
+        <div class="platform tiktok">
+          <div class="platform-header">
+            <span class="platform-name">TikTok</span>
+            <span class="platform-icon">♪</span>
+          </div>
+          <div class="platform-algo">
+            <strong>The algorithm:</strong> drops average videos in a 200–500 view "jail."
+            Surpassing 1.5K proves your watch-time. We pay you the moment you escape.
+          </div>
+          <div class="tier-list">
+            <div class="tier first">
+              <span class="tier-views">1.5K – 10K</span>
+              <span class="tier-payout">$5</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">10K – 50K</span>
+              <span class="tier-payout">$20</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">50K – 250K</span>
+              <span class="tier-payout">$60</span>
+            </div>
+            <div class="tier">
+              <span class="tier-views">250K – 1M</span>
+              <span class="tier-payout">$125</span>
+            </div>
+            <div class="tier bonus">
+              <span class="tier-views">1M+ Bonus</span>
+              <span class="tier-payout">$250 / 1M</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="volume-math">
+        <p>
+          Remember: <strong>infinite videos, infinite accounts.</strong> Pull your assets
+          from the Generator, add your special sauce, and post 15 videos a day.
+          One million-view hit a week makes you an extra <strong>$1,000/month minimum</strong>.
+          Two hits a week, two thousand. The math doesn't care how many you post — only how many land.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section>
+    <div class="container">
+      <div class="section-num">
+        <span>05</span>
+        <span class="section-num-line"></span>
+        <span>Campaign Rules &amp; Cutoffs</span>
+      </div>
+      <h2>Read these carefully.<br/><em>No exceptions.</em></h2>
+
+      <div class="rules-warning">
+        <div class="rules-warning-icon">!</div>
+        <div>
+          <p>
+            <strong>We guarantee fast, reliable payouts</strong> — but to protect the app's margins,
+            every single rule below must be met before payment is released. Missing one rule
+            means missing the payout. We don't negotiate this.
+          </p>
+        </div>
+      </div>
+
+      <div class="rules-list">
+        <div class="rule">
+          <div class="rule-num">01</div>
+          <div class="rule-content">
+            <h4>Mandatory App Reveal &amp; CTA</h4>
+            <p>
+              A video with 10 million views means nothing if viewers don't know what our app is.
+              Every video must <strong>clearly show the app being used</strong> and have a clear
+              call-to-action — e.g. <em>"Link in bio to download."</em>
+            </p>
+            <div class="key-fact"><span>RULE:</span> No App = No Pay.</div>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-num">02</div>
+          <div class="rule-content">
+            <h4>The Tier-1 Geography Rule</h4>
+            <p>
+              We're promoting an English-speaking app. When submitting for payout, attach a
+              screenshot of your native analytics (Audience Demographics).
+              At least <strong>50% of views must come from Tier-1 countries</strong> —
+              USA, UK, Canada, Australia, etc.
+            </p>
+            <p>
+              If your video goes viral in non-English regions, it won't convert for us, and we
+              can't pay it out.
+            </p>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-num">03</div>
+          <div class="rule-content">
+            <h4>The 5 Million View Cutoff (Cap)</h4>
+            <p>
+              Payouts max out at <strong>5 million views per video</strong> — a maximum of
+              <strong>$1,250 per single video</strong>.
+            </p>
+            <p>
+              <strong>Why?</strong> Past 5M, the algorithms push videos to global audiences
+              (non-English speakers, young children) who don't download the app.
+            </p>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-num">04</div>
+          <div class="rule-content">
+            <h4>The 7-Day Maturation Rule</h4>
+            <p>
+              You can only submit a video for payout <strong>7 days after it was posted</strong>.
+              This lets the video finish accumulating its viral views so we can pay you accurately
+              in one lump sum.
+            </p>
+          </div>
+        </div>
+
+        <div class="rule">
+          <div class="rule-num">05</div>
+          <div class="rule-content">
+            <h4>Zero Tolerance for Fake Engagement</h4>
+            <p>
+              Do not buy views. Do not use engagement pods, view-bots, or boosting groups.
+              We actively monitor watch-time graphs in your analytics.
+              Botted views have a <strong>0.01-second average duration</strong> — they're obvious.
+            </p>
+            <div class="key-fact"><span>CONSEQUENCE:</span> Permanent ban + forfeit of all unpaid earnings. Immediately.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section>
+    <div class="container">
+      <div class="section-num">
+        <span>06</span>
+        <span class="section-num-line"></span>
+        <span>Payouts</span>
+      </div>
+      <h2>Fast money,<br/>reliable rails.</h2>
+
+      <div class="payouts-bar">
+        <div>
+          <h3>Cash flow matters.</h3>
+          <p>
+            We know editors live and die by their cash flow. Invoices are processed
+            on a fixed cycle, and we pay through the cheapest international rails available
+            so you keep more of what you earn.
+          </p>
+        </div>
+        <div class="payments">
+          <div class="payment-row">
+            <span class="payment-label">Payment Cycle</span>
+            <span class="payment-value placeholder">Friday / Bi-weekly</span>
+          </div>
+          <div class="payment-row">
+            <span class="payment-label">Currency</span>
+            <span class="payment-value">USD</span>
+          </div>
+          <div class="payment-row">
+            <span class="payment-label">Fees</span>
+            <span class="payment-value" style="color:var(--money);">Lowest possible</span>
+          </div>
+          <div class="payment-row">
+            <span class="payment-label">Methods</span>
+            <span class="payment-methods">
+              <span class="method-pill">Wise</span>
+              <span class="method-pill">Payoneer</span>
+              <span class="method-pill">USDT</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="section-num">
+        <span>07</span>
+        <span class="section-num-line"></span>
+        <span>Get Started</span>
+      </div>
+      <h2>Ready to start <em>printing?</em></h2>
+      <p class="lede">
+        Five steps from this page to your first payout. The editors who win this game
+        are the ones who run it like a factory: high volume, sharp editing, every video
+        squeezing the format harder than the last.
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">STEP 01</span>
+          <span class="step-text">Get exclusive access in <code>#generator-tool</code></span>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step">
+          <span class="step-num">STEP 02</span>
+          <span class="step-text">Grab background footage from <code>#assets</code></span>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step">
+          <span class="step-num">STEP 03</span>
+          <span class="step-text">Spin up fresh social accounts</span>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step">
+          <span class="step-num">STEP 04</span>
+          <span class="step-text">Build an infinite line of viral videos — volume × special sauce</span>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step">
+          <span class="step-num">STEP 05</span>
+          <span class="step-text">After 7 days, drop your links in <code>#payout-submissions</code></span>
+          <span class="step-arrow">→</span>
+        </div>
+      </div>
+
+      <div class="signoff">
+        <div class="signoff-text">Let's go viral.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <span>© The Creator Network · 2026</span>
+      <span>CN-PAYOUT-2026 / Confidential</span>
+      <span>Questions? <span style="color:var(--money);">#network-help</span></span>
+    </div>
+  </footer>
+
+</body>
+</html>

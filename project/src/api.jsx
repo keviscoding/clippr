@@ -281,6 +281,35 @@
     return `https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`;
   }
 
+  // Instagram (post / reel / tv)
+  function instagramShortcode(url){
+    if (!url) return null;
+    try {
+      const u = new URL(url);
+      const host = u.hostname.replace(/^www\./, "").toLowerCase();
+      if (!host.endsWith("instagram.com")) return null;
+      const m = u.pathname.match(/^\/(?:reel|reels|p|tv)\/([^\/?#]+)/);
+      return m ? m[1] : null;
+    } catch { return null; }
+  }
+  function isInstagram(url){ return !!instagramShortcode(url); }
+  function isInstagramReel(url){
+    if (!url) return false;
+    try {
+      const u = new URL(url);
+      return /^\/(reel|reels)\//.test(u.pathname);
+    } catch { return false; }
+  }
+  function instagramEmbed(shortcode){
+    return shortcode ? `https://www.instagram.com/p/${shortcode}/embed/?cr=1&v=14` : null;
+  }
+  function videoKindFromUrl(url){
+    if (youtubeId(url)) return isYoutubeShorts(url) ? "yt-shorts" : "yt";
+    if (isInstagramReel(url)) return "ig-reel";
+    if (isInstagram(url)) return "ig";
+    return "other";
+  }
+
   // ---------- Campaign stats (admin-only / informational) ----------
   async function getCampaignStats(campaignId){
     const r = requireClient(); if (r) return r;
@@ -314,5 +343,6 @@
     getAdminStats,
     // helpers
     detectPlatform, youtubeId, isYoutubeShorts, youtubeThumb, youtubeEmbed,
+    instagramShortcode, isInstagram, isInstagramReel, instagramEmbed, videoKindFromUrl,
   };
 })();

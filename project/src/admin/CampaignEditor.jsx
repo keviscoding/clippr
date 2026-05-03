@@ -213,7 +213,7 @@ function ExamplesEditor({ examples, onChange }){
   return (
     <div style={{display:"flex",flexDirection:"column",gap:10}}>
       <div style={{fontSize:13,color:"#6E6D66",lineHeight:1.5}}>
-        Add YouTube or YouTube Shorts URLs. The carousel on the brief page shows the thumbnail and plays the video in a popup when a clipper clicks.
+        Add YouTube, YouTube Shorts, or Instagram Reel URLs. The carousel on the brief page shows the card and plays the video in a popup when a clipper clicks.
       </div>
       {list.length === 0 && (
         <div style={{padding:"16px 18px",background:"#FAFAF7",border:"1px dashed #E8E6DF",borderRadius:10,fontSize:13,color:"#6E6D66",textAlign:"center"}}>
@@ -236,23 +236,37 @@ function ExamplesEditor({ examples, onChange }){
 }
 
 function ExampleRow({ row, index, count, onChange, onRemove, onMoveUp }){
-  const id = api.youtubeId(row.url);
-  const thumb = id ? api.youtubeThumb(id) : null;
-  const isYt = !!id;
+  const ytId = api.youtubeId(row.url);
+  const igCode = !ytId ? api.instagramShortcode(row.url) : null;
+  const thumb = ytId ? api.youtubeThumb(ytId) : null;
+  const isYt = !!ytId;
+  const isIg = !!igCode;
+  const igGradient = "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)";
   return (
     <div style={{display:"grid",gridTemplateColumns:"96px 1fr auto",gap:14,padding:"12px",border:"1px solid #E8E6DF",borderRadius:12,background:"#fff",alignItems:"start"}} className="adm-edit-row">
       <div style={{aspectRatio:"9/14",background:"#0A0A0A",borderRadius:8,overflow:"hidden",position:"relative"}}>
         {thumb ? (
           <img src={thumb} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+        ) : isIg ? (
+          <>
+            <div style={{position:"absolute",inset:0,background:igGradient}}/>
+            <div style={{position:"absolute",inset:0,display:"grid",placeItems:"center",color:"#fff"}}>
+              <span style={{display:"inline-block",width:26,height:26,borderRadius:6,border:"2px solid #fff",position:"relative"}}>
+                <span style={{position:"absolute",top:3,right:3,width:4,height:4,borderRadius:999,background:"#fff"}}/>
+                <span style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:11,height:11,borderRadius:999,border:"2px solid #fff"}}/>
+              </span>
+            </div>
+          </>
         ) : (
           <div style={{position:"absolute",inset:0,display:"grid",placeItems:"center",color:"rgba(255,255,255,0.4)",fontSize:10,fontFamily:"Geist Mono,monospace",letterSpacing:"0.06em",textAlign:"center",padding:6}}>
-            paste<br/>YouTube<br/>URL
+            paste<br/>YouTube or<br/>Instagram URL
           </div>
         )}
         {isYt && <div style={{position:"absolute",top:4,right:4,padding:"2px 5px",background:"rgba(255,0,0,0.92)",borderRadius:4,fontFamily:"Geist Mono,monospace",fontSize:8,color:"#fff",letterSpacing:"0.06em",fontWeight:600}}>{api.isYoutubeShorts(row.url)?"SHORTS":"YT"}</div>}
+        {isIg && <div style={{position:"absolute",top:4,right:4,padding:"2px 5px",background:"rgba(0,0,0,0.55)",backdropFilter:"blur(6px)",borderRadius:4,fontFamily:"Geist Mono,monospace",fontSize:8,color:"#fff",letterSpacing:"0.06em",fontWeight:600}}>{api.isInstagramReel(row.url)?"REEL":"IG"}</div>}
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:8,minWidth:0}}>
-        <input value={row.url || ""} onChange={e => onChange({ url: e.target.value })} placeholder="https://www.youtube.com/shorts/… or /watch?v=…"
+        <input value={row.url || ""} onChange={e => onChange({ url: e.target.value })} placeholder="YouTube /shorts/…  ·  /watch?v=…  ·  Instagram /reel/…"
                style={{height:38,padding:"0 12px",fontFamily:"Geist Mono,monospace",fontSize:12,border:"1px solid #E8E6DF",borderRadius:8,outline:"none"}}/>
         <input value={row.hook || ""} onChange={e => onChange({ hook: e.target.value })} placeholder="Hook (overlay caption shown on the card)"
                style={{height:38,padding:"0 12px",fontFamily:"Geist,sans-serif",fontSize:13,border:"1px solid #E8E6DF",borderRadius:8,outline:"none"}}/>
