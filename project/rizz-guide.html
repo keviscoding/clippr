@@ -389,6 +389,97 @@
     letter-spacing: 0.08em;
   }
 
+  /* EXAMPLE REELS */
+  .example-reels {
+    margin-top: 32px;
+    padding: 56px 48px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    position: relative;
+  }
+  .example-reels::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, var(--money-glow) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .reels-header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .reels-label {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--money);
+    margin-bottom: 16px;
+    padding: 5px 12px;
+    border: 1px solid rgba(184, 255, 61, 0.3);
+    background: rgba(184, 255, 61, 0.06);
+    border-radius: 999px;
+  }
+  .reels-header h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .reels-header p {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .reels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .reel-frame {
+    aspect-ratio: 9 / 16;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+  .reel-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .reels-fallback {
+    margin-top: 28px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    position: relative;
+  }
+  .reels-fallback a {
+    color: var(--money);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin: 0 6px;
+  }
+
   /* GENERATOR */
   .generator-grid {
     display: grid;
@@ -943,6 +1034,9 @@
     .platform-algo { padding: 16px 22px; }
     .tier { padding: 12px 22px; }
     .back-pill { top: 12px; left: 12px; padding: 7px 12px; font-size: 10px; }
+    .example-reels { padding: 36px 20px; }
+    .reels-grid { grid-template-columns: 1fr; gap: 18px; max-width: 360px; }
+    .reels-header h3 { font-size: 24px; }
   }
 </style>
 </head>
@@ -1093,6 +1187,32 @@
           <h4>The Reveal</h4>
           <p>Right as the conversation gets stuck, you cut to a screen recording of our app generating the perfect reply.</p>
           <div class="examples">App Demo · CTA · Link in Bio</div>
+        </div>
+      </div>
+
+      <div class="example-reels">
+        <div class="reels-header">
+          <span class="reels-label">★ Examples · Watch &amp; Study</span>
+          <h3>Two reels currently going viral.</h3>
+          <p>This is exactly the format we want. Hook on top, retention B-roll underneath, app reveal at the end. Watch them all the way through, then watch them again with the sound off — pay attention to where the cuts hit and how the reveal lands.</p>
+        </div>
+        <div class="reels-grid">
+          <div class="reel-frame">
+            <iframe src="https://www.instagram.com/reel/DHSd0HvJkTD/embed/"
+                    scrolling="no" allowfullscreen loading="lazy"
+                    allow="encrypted-media; autoplay"></iframe>
+          </div>
+          <div class="reel-frame">
+            <iframe src="https://www.instagram.com/reel/DHP-S81pGWB/embed/"
+                    scrolling="no" allowfullscreen loading="lazy"
+                    allow="encrypted-media; autoplay"></iframe>
+          </div>
+        </div>
+        <div class="reels-fallback">
+          Embed not loading? Open directly →
+          <a href="https://www.instagram.com/reel/DHSd0HvJkTD/" target="_blank" rel="noreferrer">Reel 1</a>
+          <span style="opacity:0.4">·</span>
+          <a href="https://www.instagram.com/reel/DHP-S81pGWB/" target="_blank" rel="noreferrer">Reel 2</a>
         </div>
       </div>
     </div>
