@@ -18,6 +18,13 @@
   const ok  = (data) => ({ data, error: null });
   const err = (error) => ({ data: null, error });
 
+  function withTimeout(promise, ms = 12000) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out — check your connection and try again.')), ms))
+    ]);
+  }
+
   const requireClient = () => {
     if (!client) return err({ message: "Backend not configured. Set SUPABASE_URL + SUPABASE_ANON_KEY in src/config.js." });
     return null;
@@ -63,10 +70,17 @@
   }
   async function updateMyProfile(patch){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
-    if (!user) return err({ message: "Not signed in" });
-    const { data, error } = await client.from("profiles").update(patch).eq("id", user.id).select().maybeSingle();
-    return error ? err(error) : ok(data);
+    try {
+      const { data: { user }, error: authErr } = await withTimeout(client.auth.getUser());
+      if (authErr) return err(authErr);
+      if (!user) return err({ message: "Not signed in" });
+      const { data, error } = await withTimeout(
+        client.from("profiles").update(patch).eq("id", user.id).select().maybeSingle()
+      );
+      return error ? err(error) : ok(data);
+    } catch (e) {
+      return err({ message: e.message || "Profile update failed" });
+    }
   }
 
   // ---------- Campaigns ----------

@@ -40,12 +40,17 @@ function SettingsPanel({ profile, onSaved }){
         account_holder: form.bank_holder || null,
       };
     }
-    const r = await api.updateMyProfile(patch);
-    setBusy(false);
-    if (r.error) { setErrMsg(r.error.message || "Save failed."); return; }
-    setOkMsg("Saved.");
-    onSaved && onSaved(r.data);
-    setTimeout(() => setOkMsg(""), 2400);
+    try {
+      const r = await api.updateMyProfile(patch);
+      setBusy(false);
+      if (r.error) { setErrMsg(r.error.message || "Save failed."); return; }
+      setOkMsg("Saved.");
+      onSaved && onSaved(r.data);
+      setTimeout(() => setOkMsg(""), 2400);
+    } catch (e) {
+      setBusy(false);
+      setErrMsg(e.message || "Save failed — please try again.");
+    }
   };
 
   return (
