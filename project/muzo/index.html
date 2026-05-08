@@ -209,11 +209,11 @@
   <h1>The AI texting<br><span class="accent">cheat code</span>.</h1>
   <p class="lede">Take a screenshot of any chat. Get five replies that actually land. Send the one that wins.</p>
 
-  <a class="cta" id="download-cta" href="./muzo.apk" download>
+  <a class="cta" id="download-cta" href="https://github.com/keviscoding/clippr/releases/latest/download/muzo.apk" download>
     <span>Download for Android</span>
     <span class="arrow">↓</span>
   </a>
-  <div class="cta-meta">Android 7+ · Free to download</div>
+  <div class="cta-meta">~109 MB · Android 7+ · Free to download</div>
   <div class="ios-note">iOS coming soon</div>
 
   <div class="shots">
@@ -252,13 +252,9 @@
 <!-- Tiny client-side guard: warn iPhone visitors gently, since the
      APK won't install on iOS. Doesn't block the page in any way. -->
 <script>
-  // Tiny client-side guards:
-  //   1. If the visitor is on iOS, soften the "iOS coming soon" line
-  //      into a yellow warning so they understand the APK won't help
-  //      them today.
-  //   2. If the APK file isn't published yet (HEAD returns 404), swap
-  //      the button into a "build in progress" state instead of
-  //      letting them click into a broken download.
+  // Soften the iOS "coming soon" note into a clear "Android only" warning
+  // for visitors who landed here on an iPhone — the APK won't install
+  // for them today and we don't want them to download a useless file.
   (function() {
     var ua = navigator.userAgent || '';
     if (/iPhone|iPad|iPod/.test(ua)) {
@@ -267,22 +263,6 @@
         iosNote.textContent = 'iOS support coming soon — this download is for Android only';
         iosNote.style.color = '#eab308';
       }
-    }
-    var cta = document.getElementById('download-cta');
-    if (cta) {
-      fetch(cta.getAttribute('href'), { method: 'HEAD' })
-        .then(function(r) {
-          if (!r.ok) {
-            cta.textContent = 'Build prepping — refresh in a minute';
-            cta.style.background = '#2a2a3a';
-            cta.style.color = '#9494a3';
-            cta.style.boxShadow = 'none';
-            cta.style.cursor = 'wait';
-            cta.removeAttribute('download');
-            cta.setAttribute('href', '#');
-          }
-        })
-        .catch(function() {});
     }
   })();
 </script>
