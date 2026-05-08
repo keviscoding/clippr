@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="index, follow" />
+<title>Muzo — AI texting cheat code</title>
+<meta name="description" content="The AI assistant that writes the perfect reply. Take a screenshot. Get five replies. Send the one that lands." />
+<meta property="og:title" content="Muzo — AI texting cheat code" />
+<meta property="og:description" content="Take a screenshot. Get five replies. Send the one that lands." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E◉%3C/text%3E%3C/svg%3E" />
+<style>
+  :root {
+    color-scheme: dark;
+    --bg:      #0a0a0f;
+    --surface: #13131c;
+    --border:  #2a2a3a;
+    --text:    #f5f5f7;
+    --dim:     #9494a3;
+    --dimmer:  #5f5f6e;
+    --accent:  #66e0b4;
+    --accent2: #4dcb9c;
+  }
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'SF Pro Text', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  /* subtle radial mint glow behind the hero */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(102,224,180,0.10) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 88px 24px 56px;
+    text-align: center;
+  }
+
+  /* ── Brand mark ── */
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--dim);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+  .mark .dot {
+    width: 8px; height: 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 16px var(--accent);
+  }
+
+  /* ── Hero ── */
+  h1 {
+    font-size: clamp(40px, 7vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -1.6px;
+    font-weight: 700;
+    margin: 0 0 22px;
+  }
+  h1 .accent { color: var(--accent); }
+  .lede {
+    font-size: clamp(17px, 2.2vw, 20px);
+    color: var(--dim);
+    max-width: 560px;
+    margin: 0 auto 40px;
+  }
+
+  /* ── Download CTA ── */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 32px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border-radius: 999px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 8px 32px rgba(102,224,180,0.25);
+  }
+  .cta:hover { background: var(--accent2); }
+  .cta:active { transform: scale(0.98); }
+  .cta .arrow { font-size: 20px; line-height: 1; }
+  .cta-meta {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--dimmer);
+  }
+
+  /* ── Screenshot strip ── */
+  .shots {
+    margin: 80px auto 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+    max-width: 880px;
+  }
+  .shots img {
+    width: 100%;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: #000;
+    aspect-ratio: 9 / 19.5;
+    object-fit: cover;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  /* On phones, show all 4 in a single horizontal scroll */
+  @media (max-width: 600px) {
+    .shots {
+      grid-template-columns: repeat(4, 70vw);
+      grid-auto-flow: column;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 12px;
+      padding: 0 12px;
+      margin-left: -24px;
+      margin-right: -24px;
+    }
+    .shots img {
+      scroll-snap-align: start;
+      max-width: 280px;
+    }
+  }
+
+  /* ── How it works strip — minimal, three steps ── */
+  .steps {
+    margin: 80px auto 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 760px;
+    text-align: left;
+  }
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 22px 24px;
+  }
+  .step .num {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .step .label {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .step .sub {
+    font-size: 14px;
+    color: var(--dim);
+  }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 80px;
+    padding: 28px 24px 40px;
+    border-top: 1px solid var(--border);
+    color: var(--dimmer);
+    font-size: 13px;
+    text-align: center;
+  }
+  footer a {
+    color: var(--dim);
+    margin: 0 8px;
+  }
+  footer a:hover { color: var(--text); }
+
+  /* iOS waitlist line under CTA — only show if we want */
+  .ios-note {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--dimmer);
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark"><span class="dot"></span>MUZO</div>
+
+  <h1>The AI texting<br><span class="accent">cheat code</span>.</h1>
+  <p class="lede">Take a screenshot of any chat. Get five replies that actually land. Send the one that wins.</p>
+
+  <a class="cta" id="download-cta" href="./muzo.apk" download>
+    <span>Download for Android</span>
+    <span class="arrow">↓</span>
+  </a>
+  <div class="cta-meta">Android 7+ · Free to download</div>
+  <div class="ios-note">iOS coming soon</div>
+
+  <div class="shots">
+    <img src="./shots/shot_01.jpg" alt="Muzo screenshot 1" loading="lazy" />
+    <img src="./shots/shot_02.jpg" alt="Muzo screenshot 2" loading="lazy" />
+    <img src="./shots/shot_03.jpg" alt="Muzo screenshot 3" loading="lazy" />
+    <img src="./shots/shot_04.jpg" alt="Muzo screenshot 4" loading="lazy" />
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="num">01</div>
+      <div class="label">Screenshot the chat</div>
+      <div class="sub">Any app — iMessage, WhatsApp, Hinge, Tinder, anything.</div>
+    </div>
+    <div class="step">
+      <div class="num">02</div>
+      <div class="label">Open Muzo</div>
+      <div class="sub">It auto-detects your latest screenshot in seconds.</div>
+    </div>
+    <div class="step">
+      <div class="num">03</div>
+      <div class="label">Send the winner</div>
+      <div class="sub">Pick from five reply options. Tap to copy. Paste. Done.</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2026 CreativeTube Ltd ·
+  <a href="./privacy.html">Privacy</a> ·
+  <a href="./terms.html">Terms</a> ·
+  <a href="./delete-account.html">Delete account</a>
+</footer>
+
+<!-- Tiny client-side guard: warn iPhone visitors gently, since the
+     APK won't install on iOS. Doesn't block the page in any way. -->
+<script>
+  // Tiny client-side guards:
+  //   1. If the visitor is on iOS, soften the "iOS coming soon" line
+  //      into a yellow warning so they understand the APK won't help
+  //      them today.
+  //   2. If the APK file isn't published yet (HEAD returns 404), swap
+  //      the button into a "build in progress" state instead of
+  //      letting them click into a broken download.
+  (function() {
+    var ua = navigator.userAgent || '';
+    if (/iPhone|iPad|iPod/.test(ua)) {
+      var iosNote = document.querySelector('.ios-note');
+      if (iosNote) {
+        iosNote.textContent = 'iOS support coming soon — this download is for Android only';
+        iosNote.style.color = '#eab308';
+      }
+    }
+    var cta = document.getElementById('download-cta');
+    if (cta) {
+      fetch(cta.getAttribute('href'), { method: 'HEAD' })
+        .then(function(r) {
+          if (!r.ok) {
+            cta.textContent = 'Build prepping — refresh in a minute';
+            cta.style.background = '#2a2a3a';
+            cta.style.color = '#9494a3';
+            cta.style.boxShadow = 'none';
+            cta.style.cursor = 'wait';
+            cta.removeAttribute('download');
+            cta.setAttribute('href', '#');
+          }
+        })
+        .catch(function() {});
+    }
+  })();
+</script>
+</body>
+</html>
