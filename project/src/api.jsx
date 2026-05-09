@@ -44,7 +44,7 @@
   // Wraps any async Supabase call with timeout + try/catch.
   async function safe(fn, timeoutMs){
     try {
-      return await withTimeout(fn, timeoutMs || 15000);
+      return await withTimeout(fn(), timeoutMs || 15000);
     } catch (e) {
       return { data: null, error: { message: e.message || "Request failed" } };
     }
