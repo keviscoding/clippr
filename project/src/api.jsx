@@ -18,7 +18,7 @@
   const ok  = (data) => ({ data, error: null });
   const err = (error) => ({ data: null, error });
 
-  function withTimeout(promise, ms = 12000) {
+  function withTimeout(promise, ms = 15000) {
     return Promise.race([
       promise,
       new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out — check your connection and try again.')), ms))
@@ -30,23 +30,43 @@
     return null;
   };
 
+  // Reads user from the locally cached session — instant, no network call.
+  // This replaces client.auth.getUser() which makes a network request that
+  // can hang indefinitely when the auth server is slow or token refresh stalls.
+  async function currentUser(){
+    if (!client) return null;
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      return session && session.user ? session.user : null;
+    } catch { return null; }
+  }
+
+  // Wraps any async Supabase call with timeout + try/catch.
+  async function safe(fn, timeoutMs){
+    try {
+      return await withTimeout(fn, timeoutMs || 15000);
+    } catch (e) {
+      return { data: null, error: { message: e.message || "Request failed" } };
+    }
+  }
+
   // ---------- Auth ----------
   async function signUp({ email, password, displayName }){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.auth.signUp({
+    const { data, error } = await safe(() => client.auth.signUp({
       email, password,
       options: { data: { display_name: displayName || email.split("@")[0] } }
-    });
+    }));
     return error ? err(error) : ok(data);
   }
   async function signIn({ email, password }){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    const { data, error } = await safe(() => client.auth.signInWithPassword({ email, password }));
     return error ? err(error) : ok(data);
   }
   async function signOut(){
     const r = requireClient(); if (r) return r;
-    const { error } = await client.auth.signOut();
+    const { error } = await safe(() => client.auth.signOut());
     return error ? err(error) : ok(true);
   }
   async function getSession(){
@@ -63,57 +83,48 @@
   // ---------- Profile ----------
   async function getMyProfile(){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     if (!user) return ok(null);
-    const { data, error } = await client.from("profiles").select("*").eq("id", user.id).maybeSingle();
+    const { data, error } = await safe(() => client.from("profiles").select("*").eq("id", user.id).maybeSingle());
     return error ? err(error) : ok(data);
   }
   async function updateMyProfile(patch){
     const r = requireClient(); if (r) return r;
-    try {
-      const { data: { user }, error: authErr } = await withTimeout(client.auth.getUser());
-      if (authErr) return err(authErr);
-      if (!user) return err({ message: "Not signed in" });
-      const { data, error } = await withTimeout(
-        client.from("profiles").update(patch).eq("id", user.id).select().maybeSingle()
-      );
-      return error ? err(error) : ok(data);
-    } catch (e) {
-      return err({ message: e.message || "Profile update failed" });
-    }
+    const user = await currentUser();
+    if (!user) return err({ message: "Not signed in" });
+    const { data, error } = await safe(() => client.from("profiles").update(patch).eq("id", user.id).select().maybeSingle());
+    return error ? err(error) : ok(data);
   }
 
   // ---------- Campaigns ----------
   async function listLiveCampaigns(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("campaigns").select("*").eq("status", "live").order("created_at", { ascending: false });
+    const { data, error } = await safe(() => client.from("campaigns").select("*").eq("status", "live").order("created_at", { ascending: false }));
     return error ? err(error) : ok(data || []);
   }
   async function listAllCampaigns(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("campaigns").select("*").order("created_at", { ascending: false });
+    const { data, error } = await safe(() => client.from("campaigns").select("*").order("created_at", { ascending: false }));
     return error ? err(error) : ok(data || []);
   }
   async function getCampaignBySlug(slug){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("campaigns").select("*").eq("slug", slug).maybeSingle();
+    const { data, error } = await safe(() => client.from("campaigns").select("*").eq("slug", slug).maybeSingle());
     return error ? err(error) : ok(data);
   }
   async function getCampaign(id){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("campaigns").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await safe(() => client.from("campaigns").select("*").eq("id", id).maybeSingle());
     return error ? err(error) : ok(data);
   }
   async function upsertCampaign(c){
     const r = requireClient(); if (r) return r;
     const payload = { ...c, updated_at: new Date().toISOString() };
-    const { data, error } = await client.from("campaigns").upsert(payload).select().maybeSingle();
+    const { data, error } = await safe(() => client.from("campaigns").upsert(payload).select().maybeSingle());
     return error ? err(error) : ok(data);
   }
 
   // ---------- Helper: attach profile rows to a list of records ----------
-  // Avoids relying on implicit FK joins (clips/payouts.user_id references
-  // auth.users, not profiles, so PostgREST can't embed profiles directly).
   async function attachProfiles(rows, profileFields = "id, display_name, handle, social_accounts, paypal_email, country"){
     if (!rows || rows.length === 0) return rows || [];
     const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
@@ -128,38 +139,38 @@
   // ---------- Clips ----------
   async function submitClip({ campaignId, url, notes, platform }){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     if (!user) return err({ message: "Not signed in" });
     const detected = platform || detectPlatform(url);
-    const { data, error } = await client.from("clips").insert({
+    const { data, error } = await safe(() => client.from("clips").insert({
       user_id: user.id, campaign_id: campaignId, url, notes: notes || null, platform: detected, status: "pending",
-    }).select().maybeSingle();
+    }).select().maybeSingle());
     return error ? err(error) : ok(data);
   }
   async function listMyClips(){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     if (!user) return ok([]);
-    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").eq("user_id", user.id).order("submitted_at", { ascending: false });
+    const { data, error } = await safe(() => client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").eq("user_id", user.id).order("submitted_at", { ascending: false }));
     return error ? err(error) : ok(data || []);
   }
   async function listPendingClips(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").eq("status", "pending").order("submitted_at", { ascending: false });
+    const { data, error } = await safe(() => client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").eq("status", "pending").order("submitted_at", { ascending: false }));
     if (error) return err(error);
     const withProfiles = await attachProfiles(data || []);
     return ok(withProfiles);
   }
   async function listAllClips(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").order("submitted_at", { ascending: false }).limit(200);
+    const { data, error } = await safe(() => client.from("clips").select("*, campaigns(name, slug, rpm, min_views, tint)").order("submitted_at", { ascending: false }).limit(200));
     if (error) return err(error);
     const withProfiles = await attachProfiles(data || []);
     return ok(withProfiles);
   }
   async function reviewClip(id, { status, views, rejection_reason }){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     const patch = {
       status,
       views: typeof views === "number" ? views : undefined,
@@ -168,11 +179,10 @@
       reviewed_by: user ? user.id : null,
     };
     Object.keys(patch).forEach(k => patch[k] === undefined && delete patch[k]);
-    const { data, error } = await client.from("clips").update(patch).eq("id", id).select().maybeSingle();
+    const { data, error } = await safe(() => client.from("clips").update(patch).eq("id", id).select().maybeSingle());
     if (error) return err(error);
-    // Recompute earnings
-    await client.rpc("recompute_clip_earned", { clip_id: id });
-    const { data: refreshed } = await client.from("clips").select("*").eq("id", id).maybeSingle();
+    await safe(() => client.rpc("recompute_clip_earned", { clip_id: id }));
+    const { data: refreshed } = await safe(() => client.from("clips").select("*").eq("id", id).maybeSingle());
     return ok(refreshed || data);
   }
   async function updateClipViews(id, views){
@@ -182,50 +192,50 @@
   // ---------- Balance ----------
   async function getMyBalance(){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     if (!user) return ok({ total_earned: 0, total_pending_paid: 0, available_balance: 0 });
-    const { data, error } = await client.from("clipper_balances").select("*").eq("user_id", user.id).maybeSingle();
+    const { data, error } = await safe(() => client.from("clipper_balances").select("*").eq("user_id", user.id).maybeSingle());
     return error ? err(error) : ok(data || { total_earned: 0, total_pending_paid: 0, available_balance: 0 });
   }
 
   // ---------- Payouts ----------
   async function requestPayout({ amount, method, destination }){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     if (!user) return err({ message: "Not signed in" });
-    const { data, error } = await client.from("payouts").insert({
+    const { data, error } = await safe(() => client.from("payouts").insert({
       user_id: user.id, amount, method, destination, status: "pending"
-    }).select().maybeSingle();
+    }).select().maybeSingle());
     return error ? err(error) : ok(data);
   }
   async function listMyPayouts(){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     if (!user) return ok([]);
-    const { data, error } = await client.from("payouts").select("*").eq("user_id", user.id).order("requested_at", { ascending: false });
+    const { data, error } = await safe(() => client.from("payouts").select("*").eq("user_id", user.id).order("requested_at", { ascending: false }));
     return error ? err(error) : ok(data || []);
   }
   async function listAllPayouts(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("payouts").select("*").order("requested_at", { ascending: false }).limit(200);
+    const { data, error } = await safe(() => client.from("payouts").select("*").order("requested_at", { ascending: false }).limit(200));
     if (error) return err(error);
     return ok(await attachProfiles(data || []));
   }
   async function listPendingPayouts(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("payouts").select("*").in("status", ["pending","processing"]).order("requested_at", { ascending: true });
+    const { data, error } = await safe(() => client.from("payouts").select("*").in("status", ["pending","processing"]).order("requested_at", { ascending: true }));
     if (error) return err(error);
     return ok(await attachProfiles(data || []));
   }
   async function listRecentPaidPayouts(limit = 12){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("payouts").select("amount, paid_at, user_id").eq("status", "paid").order("paid_at", { ascending: false }).limit(limit);
+    const { data, error } = await safe(() => client.from("payouts").select("amount, paid_at, user_id").eq("status", "paid").order("paid_at", { ascending: false }).limit(limit));
     if (error) return err(error);
     return ok(await attachProfiles(data || [], "id, display_name, handle, country"));
   }
   async function processPayout(id, { status, txn_ref, notes }){
     const r = requireClient(); if (r) return r;
-    const { data: { user } } = await client.auth.getUser();
+    const user = await currentUser();
     const patch = {
       status,
       txn_ref: txn_ref || null,
@@ -235,46 +245,32 @@
       patch.paid_at = new Date().toISOString();
       patch.paid_by = user ? user.id : null;
     }
-    const { data, error } = await client.from("payouts").update(patch).eq("id", id).select().maybeSingle();
+    const { data, error } = await safe(() => client.from("payouts").update(patch).eq("id", id).select().maybeSingle());
     return error ? err(error) : ok(data);
   }
 
   // ---------- Image upload (Supabase Storage) ----------
   async function uploadImage(file){
     const r = requireClient(); if (r) return r;
-    try {
-      const ext = (file.name || "img").split(".").pop() || "jpg";
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const { data, error } = await withTimeout(
-        client.storage.from("uploads").upload(path, file, { cacheControl: "3600", upsert: false }),
-        20000
-      );
-      if (error) return err(error);
-      const { data: urlData } = client.storage.from("uploads").getPublicUrl(data.path);
-      return ok(urlData.publicUrl);
-    } catch (e) {
-      return err({ message: e.message || "Upload failed" });
-    }
+    const ext = (file.name || "img").split(".").pop() || "jpg";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const { data, error } = await safe(() => client.storage.from("uploads").upload(path, file, { cacheControl: "3600", upsert: false }), 20000);
+    if (error) return err(error);
+    const { data: urlData } = client.storage.from("uploads").getPublicUrl(data.path);
+    return ok(urlData.publicUrl);
   }
 
   // ---------- Site config ----------
   async function getSiteConfig(){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("site_config").select("*").eq("id", "main").maybeSingle();
+    const { data, error } = await safe(() => client.from("site_config").select("*").eq("id", "main").maybeSingle());
     return error ? err(error) : ok(data);
   }
   async function updateSiteConfig(patch){
     const r = requireClient(); if (r) return r;
-    try {
-      const payload = { id: "main", ...patch, updated_at: new Date().toISOString() };
-      const { data, error } = await withTimeout(
-        client.from("site_config").upsert(payload, { onConflict: "id" }).select().maybeSingle(),
-        20000
-      );
-      return error ? err(error) : ok(data);
-    } catch (e) {
-      return err({ message: e.message || "Config update failed" });
-    }
+    const payload = { id: "main", ...patch, updated_at: new Date().toISOString() };
+    const { data, error } = await safe(() => client.from("site_config").upsert(payload, { onConflict: "id" }).select().maybeSingle(), 20000);
+    return error ? err(error) : ok(data);
   }
 
   // ---------- Admin stats ----------
@@ -300,6 +296,13 @@
     });
   }
 
+  // ---------- Admin: all clippers ----------
+  async function listAllProfiles(){
+    const r = requireClient(); if (r) return r;
+    const { data, error } = await safe(() => client.from("profiles").select("id, display_name, handle, social_accounts, country, payout_method, paypal_email, created_at, is_admin").order("created_at", { ascending: false }));
+    return error ? err(error) : ok(data || []);
+  }
+
   // ---------- Helpers ----------
   function detectPlatform(url){
     if (!url) return "other";
@@ -310,7 +313,6 @@
     return "other";
   }
 
-  // Extract YouTube video id from any youtube/shorts/youtu.be URL.
   function youtubeId(url){
     if (!url) return null;
     try {
@@ -333,7 +335,6 @@
     return `https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`;
   }
 
-  // Instagram (post / reel / tv)
   function instagramShortcode(url){
     if (!url) return null;
     try {
@@ -362,10 +363,9 @@
     return "other";
   }
 
-  // ---------- Campaign stats (admin-only / informational) ----------
   async function getCampaignStats(campaignId){
     const r = requireClient(); if (r) return r;
-    const { data, error } = await client.from("clips").select("user_id, status, views, earned").eq("campaign_id", campaignId);
+    const { data, error } = await safe(() => client.from("clips").select("user_id, status, views, earned").eq("campaign_id", campaignId));
     if (error) return err(error);
     const rows = data || [];
     const clipperSet = new Set(rows.map(r => r.user_id));
@@ -396,7 +396,7 @@
     // site config
     getSiteConfig, updateSiteConfig,
     // admin
-    getAdminStats,
+    getAdminStats, listAllProfiles,
     // helpers
     detectPlatform, youtubeId, isYoutubeShorts, youtubeThumb, youtubeEmbed,
     instagramShortcode, isInstagram, isInstagramReel, instagramEmbed, videoKindFromUrl,

@@ -182,6 +182,7 @@
 <script type="text/babel" src="src/admin/CampaignEditor.jsx"></script>
 <script type="text/babel" src="src/admin/PayoutsAdmin.jsx"></script>
 <script type="text/babel" src="src/admin/SiteSettings.jsx"></script>
+<script type="text/babel" src="src/admin/ClippersAdmin.jsx"></script>
 
 <script type="text/babel">
   const { useState, useEffect, useCallback } = React;
@@ -317,6 +318,7 @@
           {view==="review"    && <ReviewQueue    key={"r"+refreshKey} onChanged={bumpRefresh}/>}
           {view==="campaigns" && <CampaignEditor key={"c"+refreshKey} onChanged={bumpRefresh}/>}
           {view==="payouts"   && <PayoutsAdmin   key={"p"+refreshKey} onChanged={bumpRefresh}/>}
+          {view==="clippers"  && <ClippersAdmin  key={"cl"+refreshKey}/>}
           {view==="settings"  && <SiteSettings   key={"s"+refreshKey} onChanged={bumpRefresh}/>}
         </div>
       </div>
