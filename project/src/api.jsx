@@ -8,10 +8,21 @@
 (function(){
   const cfg = window.CLIPPR_CONFIG || {};
   const configured = cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY;
+  // Fetch wrapper with a hard 15s timeout. This prevents the Supabase
+  // client's internal auth-token refresh (which uses raw fetch) from
+  // hanging indefinitely when the auth server is slow.
+  function timedFetch(url, options) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    return fetch(url, { ...options, signal: controller.signal })
+      .finally(() => clearTimeout(timer));
+  }
+
   let client = null;
   if (configured && window.supabase && window.supabase.createClient) {
     client = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+      global: { fetch: timedFetch }
     });
   }
 
