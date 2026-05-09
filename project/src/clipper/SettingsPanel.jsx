@@ -2,8 +2,11 @@
 const { useState: useStateSP, useEffect: useEffectSP } = React;
 
 function SettingsPanel({ profile, onSaved }){
+  const existingAccounts = (profile && profile.social_accounts && Array.isArray(profile.social_accounts) && profile.social_accounts.length > 0)
+    ? profile.social_accounts
+    : (profile && profile.handle) ? [{ platform: "tiktok", handle: profile.handle }] : [];
+
   const [form, setForm] = useStateSP({
-    handle:        (profile && profile.handle) || "",
     display_name:  (profile && profile.display_name) || "",
     country:       (profile && profile.country) || "",
     payout_method: (profile && profile.payout_method) || "paypal",
@@ -13,17 +16,27 @@ function SettingsPanel({ profile, onSaved }){
     bank_swift:    (profile && profile.bank_details && profile.bank_details.swift) || "",
     bank_holder:   (profile && profile.bank_details && profile.bank_details.account_holder) || "",
   });
+  const [accounts, setAccounts] = useStateSP(existingAccounts);
   const [busy, setBusy] = useStateSP(false);
   const [okMsg, setOkMsg] = useStateSP("");
   const [errMsg, setErrMsg] = useStateSP("");
 
   const set = (k,v) => setForm(f => ({...f, [k]: v}));
 
+  const addAccount = () => setAccounts(a => [...a, { platform: "tiktok", handle: "" }]);
+  const removeAccount = (i) => setAccounts(a => a.filter((_,idx) => idx !== i));
+  const updateAccount = (i, patch) => setAccounts(a => a.map((x,idx) => idx === i ? { ...x, ...patch } : x));
+
   const save = async () => {
     setOkMsg(""); setErrMsg("");
     setBusy(true);
+    const cleanAccounts = accounts.filter(a => a.handle && a.handle.trim());
     const patch = {
-      handle: form.handle ? (form.handle.startsWith("@") ? form.handle : "@"+form.handle) : null,
+      handle: cleanAccounts.length > 0 ? cleanAccounts[0].handle : null,
+      social_accounts: cleanAccounts.map(a => ({
+        platform: a.platform,
+        handle: a.handle.startsWith("@") ? a.handle : "@" + a.handle,
+      })),
       display_name: form.display_name || null,
       country: form.country || null,
       payout_method: form.payout_method,
@@ -61,9 +74,32 @@ function SettingsPanel({ profile, onSaved }){
       </div>
 
       <Section title="Profile">
-        <Field label="Handle (TikTok / YouTube)" value={form.handle} onChange={v=>set("handle", v)} placeholder="@yourhandle"/>
         <Field label="Display name" value={form.display_name} onChange={v=>set("display_name", v)} placeholder="Your name"/>
         <Field label="Country" value={form.country} onChange={v=>set("country", v)} placeholder="e.g. India, Philippines, Nigeria"/>
+      </Section>
+
+      <Section title="Your accounts">
+        <p style={{fontSize:13,color:"#6E6D66",lineHeight:1.5,margin:0}}>
+          Add all the TikTok, YouTube, and Instagram accounts you post clips from. You can have unlimited accounts.
+        </p>
+        {accounts.map((a, i) => (
+          <div key={i} style={{display:"grid",gridTemplateColumns:"120px 1fr auto",gap:8,alignItems:"center"}}>
+            <select value={a.platform} onChange={e=>updateAccount(i, {platform:e.target.value})}
+              style={{height:42,padding:"0 8px",fontFamily:"Geist,sans-serif",fontSize:13,border:"1px solid #E8E6DF",borderRadius:10,background:"#fff",outline:"none"}}>
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+              <option value="instagram">Instagram</option>
+            </select>
+            <input value={a.handle || ""} onChange={e=>updateAccount(i, {handle:e.target.value})} placeholder="@yourhandle"
+              style={{height:42,padding:"0 12px",fontFamily:"Geist Mono,monospace",fontSize:14,border:"1px solid #E8E6DF",borderRadius:10,background:"#fff",outline:"none"}}/>
+            <button onClick={()=>removeAccount(i)} style={{width:36,height:36,borderRadius:8,border:"1px solid #FECACA",background:"transparent",color:"#B91C1C",cursor:"pointer",display:"grid",placeItems:"center",flexShrink:0}}>
+              <Icon name="x" size={14}/>
+            </button>
+          </div>
+        ))}
+        <button onClick={addAccount} style={{display:"inline-flex",alignItems:"center",gap:8,padding:"9px 14px",background:"#0A0A0A",color:"#FAFAF7",border:"none",borderRadius:10,fontFamily:"Geist,sans-serif",fontWeight:600,fontSize:13,cursor:"pointer",alignSelf:"flex-start"}}>
+          <Icon name="plus" size={14}/> Add account
+        </button>
       </Section>
 
       <Section title="Payout method">

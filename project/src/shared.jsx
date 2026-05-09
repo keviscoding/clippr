@@ -161,4 +161,63 @@ function useToast(){
   return {push, Toasts};
 }
 
-Object.assign(window, { LogoMark, Wordmark, Icon, Button, Badge, Eyebrow, PhoneFrame, useToast });
+// ============ IMAGE UPLOAD (drag-drop + browse + URL fallback) ============
+function ImageUpload({ value, onChange, label, rounded }){
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadErr, setUploadErr] = useState("");
+  const fileRef = useRef(null);
+
+  const handleFile = async (file) => {
+    if (!file || !file.type.startsWith("image/")) { setUploadErr("Please select an image file."); return; }
+    if (file.size > 10 * 1024 * 1024) { setUploadErr("Image must be under 10 MB."); return; }
+    setUploadErr(""); setUploading(true);
+    const r = await window.api.uploadImage(file);
+    setUploading(false);
+    if (r.error) { setUploadErr(r.error.message || "Upload failed"); return; }
+    onChange(r.data);
+  };
+
+  const onDrop = (e) => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]); };
+  const onDragOver = (e) => { e.preventDefault(); setDragOver(true); };
+
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:8}}>
+      {label && <span style={{fontFamily:"Geist Mono,monospace",fontSize:10,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6E6D66"}}>{label}</span>}
+      <div
+        onDrop={onDrop} onDragOver={onDragOver} onDragLeave={()=>setDragOver(false)}
+        onClick={()=> !uploading && fileRef.current && fileRef.current.click()}
+        style={{
+          position:"relative",overflow:"hidden",cursor:uploading?"wait":"pointer",
+          border: dragOver ? "2px dashed #D4FF3A" : "2px dashed #E8E6DF",
+          borderRadius: rounded ? 999 : 12,
+          background: dragOver ? "rgba(212,255,58,0.06)" : "#FAFAF7",
+          width: rounded ? 96 : "100%",
+          height: rounded ? 96 : (value ? 120 : 80),
+          display:"flex",alignItems:"center",justifyContent:"center",
+          transition:"border-color 120ms, background 120ms",
+        }}
+      >
+        {value ? (
+          <img src={value} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",borderRadius:rounded?999:10}}/>
+        ) : uploading ? (
+          <span style={{fontSize:12,color:"#6E6D66",fontFamily:"Geist Mono,monospace"}}>Uploading…</span>
+        ) : (
+          <div style={{textAlign:"center",padding:8}}>
+            <Icon name="upload" size={18}/>
+            <div style={{fontSize:11,color:"#6E6D66",marginTop:4}}>Drop image or click to browse</div>
+          </div>
+        )}
+        {uploading && <div style={{position:"absolute",inset:0,background:"rgba(250,250,247,0.7)",display:"grid",placeItems:"center"}}><span style={{fontSize:12,fontFamily:"Geist Mono,monospace",color:"#6E6D66"}}>Uploading…</span></div>}
+      </div>
+      <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e => { handleFile(e.target.files[0]); e.target.value = ""; }}/>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        <input type="text" value={value || ""} onChange={e=>onChange(e.target.value)} placeholder="Or paste image URL" style={{flex:1,height:36,padding:"0 10px",fontFamily:"Geist Mono,monospace",fontSize:12,border:"1px solid #E8E6DF",borderRadius:8,background:"#fff",outline:"none"}}/>
+        {value && <button onClick={()=>onChange("")} style={{padding:"6px 10px",border:"1px solid #FECACA",borderRadius:8,background:"transparent",color:"#B91C1C",fontFamily:"Geist,sans-serif",fontSize:12,fontWeight:600,cursor:"pointer"}}>Clear</button>}
+      </div>
+      {uploadErr && <div style={{fontSize:12,color:"#B91C1C"}}>{uploadErr}</div>}
+    </div>
+  );
+}
+
+Object.assign(window, { LogoMark, Wordmark, Icon, Button, Badge, Eyebrow, PhoneFrame, useToast, ImageUpload });

@@ -1,4 +1,4 @@
-/* global React, Eyebrow, Icon, api */
+/* global React, Eyebrow, Icon, ImageUpload, api */
 const { useState: useStateSS, useEffect: useEffectSS } = React;
 
 function SiteSettings({ onChanged }){
@@ -71,15 +71,7 @@ function SiteSettings({ onChanged }){
 
       <SSCard title="Founder section">
         <SSField label="Founder name" value={config.founder_name} onChange={v=>set("founder_name", v)} placeholder="Kevis"/>
-        <SSField label="Profile photo URL" value={config.founder_photo_url} onChange={v=>set("founder_photo_url", v)} placeholder="https://i.imgur.com/… or any image URL"/>
-        {config.founder_photo_url && (
-          <div style={{display:"flex",alignItems:"center",gap:14}}>
-            <div style={{width:64,height:64,borderRadius:999,overflow:"hidden",border:"2px solid #E8E6DF",flexShrink:0}}>
-              <img src={config.founder_photo_url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.display="none"}}/>
-            </div>
-            <span style={{fontSize:13,color:"#6E6D66"}}>Preview</span>
-          </div>
-        )}
+        <ImageUpload label="PROFILE PHOTO" value={config.founder_photo_url} onChange={v=>set("founder_photo_url", v)} rounded/>
         <SSField label="Founder video URL (YouTube or Loom)" value={config.founder_video_url} onChange={v=>set("founder_video_url", v)} placeholder="https://youtube.com/watch?v=… or https://www.loom.com/share/…"/>
         <SSField label="Video title" value={config.founder_video_title} onChange={v=>set("founder_video_title", v)} placeholder="How Clippr works (2 min)"/>
       </SSCard>

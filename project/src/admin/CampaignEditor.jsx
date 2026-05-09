@@ -1,4 +1,4 @@
-/* global React, Icon, Eyebrow, Badge, Button, api */
+/* global React, Icon, Eyebrow, Badge, Button, ImageUpload, api */
 const { useState: useStateCE, useEffect: useEffectCE } = React;
 
 function CampaignEditor({ onChanged }){
@@ -129,12 +129,7 @@ function Editor({ editing, setEditing, save, busy, errMsg, onCancel }){
         <Field label="Tag" value={editing.tag} onChange={v=>set("tag", v)} placeholder="Dating · Lifestyle"/>
         <Field label="Description" multiline value={editing.description} onChange={v=>set("description", v)} placeholder="One-sentence summary."/>
         <Field label="Brief (markdown)" multiline rows={5} value={editing.brief_md} onChange={v=>set("brief_md", v)} placeholder="Hook within 1.5s. Use the POV format. Show the app screen recording…"/>
-        <Field label="Banner image URL (optional — falls back to tint gradient)" value={editing.banner_url} onChange={v=>set("banner_url", v)} placeholder="https://i.imgur.com/…  or any image URL"/>
-        {editing.banner_url && (
-          <div style={{height:100,borderRadius:10,overflow:"hidden",border:"1px solid #E8E6DF",background:`linear-gradient(135deg, ${editing.tint||"#6366f1"}, #1a1a1a)`}}>
-            <img src={editing.banner_url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.display="none"}}/>
-          </div>
-        )}
+        <ImageUpload label="BANNER IMAGE (OPTIONAL — FALLS BACK TO TINT GRADIENT)" value={editing.banner_url} onChange={v=>set("banner_url", v)}/>
         <Row>
           <Field label="Tint (hex — used as fallback color)" value={editing.tint} onChange={v=>set("tint", v)} placeholder="#6366f1"/>
           <Field label="Status" select options={[{v:"draft",l:"Draft"},{v:"live",l:"Live"},{v:"paused",l:"Paused"},{v:"ended",l:"Ended"}]} value={editing.status} onChange={v=>set("status", v)}/>

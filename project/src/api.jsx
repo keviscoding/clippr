@@ -114,7 +114,7 @@
   // ---------- Helper: attach profile rows to a list of records ----------
   // Avoids relying on implicit FK joins (clips/payouts.user_id references
   // auth.users, not profiles, so PostgREST can't embed profiles directly).
-  async function attachProfiles(rows, profileFields = "id, display_name, handle, paypal_email, country"){
+  async function attachProfiles(rows, profileFields = "id, display_name, handle, social_accounts, paypal_email, country"){
     if (!rows || rows.length === 0) return rows || [];
     const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
     if (userIds.length === 0) return rows;
@@ -239,6 +239,24 @@
     return error ? err(error) : ok(data);
   }
 
+  // ---------- Image upload (Supabase Storage) ----------
+  async function uploadImage(file){
+    const r = requireClient(); if (r) return r;
+    try {
+      const ext = (file.name || "img").split(".").pop() || "jpg";
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const { data, error } = await withTimeout(
+        client.storage.from("uploads").upload(path, file, { cacheControl: "3600", upsert: false }),
+        20000
+      );
+      if (error) return err(error);
+      const { data: urlData } = client.storage.from("uploads").getPublicUrl(data.path);
+      return ok(urlData.publicUrl);
+    } catch (e) {
+      return err({ message: e.message || "Upload failed" });
+    }
+  }
+
   // ---------- Site config ----------
   async function getSiteConfig(){
     const r = requireClient(); if (r) return r;
@@ -248,9 +266,10 @@
   async function updateSiteConfig(patch){
     const r = requireClient(); if (r) return r;
     try {
-      const payload = { ...patch, updated_at: new Date().toISOString() };
+      const payload = { id: "main", ...patch, updated_at: new Date().toISOString() };
       const { data, error } = await withTimeout(
-        client.from("site_config").update(payload).eq("id", "main").select().maybeSingle()
+        client.from("site_config").upsert(payload, { onConflict: "id" }).select().maybeSingle(),
+        20000
       );
       return error ? err(error) : ok(data);
     } catch (e) {
@@ -372,6 +391,8 @@
     getMyBalance,
     // payouts
     requestPayout, listMyPayouts, listAllPayouts, listPendingPayouts, listRecentPaidPayouts, processPayout,
+    // uploads
+    uploadImage,
     // site config
     getSiteConfig, updateSiteConfig,
     // admin

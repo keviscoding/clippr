@@ -54,7 +54,7 @@ function AuthModal({ open, mode="signup", onClose, onSwitch, onSuccess }){
         </p>
 
         <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          {isSignup && <AuthInput label="TikTok / YouTube handle" value={handle} onChange={setHandle} placeholder="@yourhandle"/>}
+          {isSignup && <AuthInput label="TikTok / YouTube handle (optional)" value={handle} onChange={setHandle} placeholder="@yourhandle — you can add this later"/>}
           <AuthInput label="Email" type="email" value={email} onChange={setEmail} placeholder="you@email.com" onKeyDown={onKey}/>
           <AuthInput label="Password" type="password" value={password} onChange={setPassword} placeholder="At least 8 characters" onKeyDown={onKey}/>
         </div>

@@ -17,9 +17,10 @@ create table if not exists profiles (
   country       text,
   payout_method text check (payout_method in ('paypal','bank')),
   paypal_email  text,
-  bank_details  jsonb,
-  is_admin      boolean default false,
-  created_at    timestamptz default now()
+  bank_details      jsonb,
+  social_accounts   jsonb default '[]'::jsonb,   -- [{platform, handle}]
+  is_admin          boolean default false,
+  created_at        timestamptz default now()
 );
 
 -- ==========================================================
@@ -236,6 +237,27 @@ create policy "site_config public read" on site_config for select using (true);
 
 drop policy if exists "site_config admin write" on site_config;
 create policy "site_config admin write" on site_config for update using (is_current_user_admin());
+
+drop policy if exists "site_config admin insert" on site_config;
+create policy "site_config admin insert" on site_config for insert with check (is_current_user_admin());
+
+-- ==========================================================
+-- Storage bucket for admin image uploads (campaign banners, founder photo, etc.)
+-- ==========================================================
+insert into storage.buckets (id, name, public) values ('uploads', 'uploads', true)
+  on conflict (id) do nothing;
+
+drop policy if exists "uploads public read" on storage.objects;
+create policy "uploads public read" on storage.objects for select using (bucket_id = 'uploads');
+
+drop policy if exists "uploads admin insert" on storage.objects;
+create policy "uploads admin insert" on storage.objects for insert with check (bucket_id = 'uploads' and is_current_user_admin());
+
+drop policy if exists "uploads admin update" on storage.objects;
+create policy "uploads admin update" on storage.objects for update using (bucket_id = 'uploads' and is_current_user_admin());
+
+drop policy if exists "uploads admin delete" on storage.objects;
+create policy "uploads admin delete" on storage.objects for delete using (bucket_id = 'uploads' and is_current_user_admin());
 
 -- ==========================================================
 -- Seed: Rizz campaign (so the marketing page has something LIVE)
