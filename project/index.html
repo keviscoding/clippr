@@ -181,6 +181,7 @@
 <script type="text/babel" src="src/admin/ReviewQueue.jsx"></script>
 <script type="text/babel" src="src/admin/CampaignEditor.jsx"></script>
 <script type="text/babel" src="src/admin/PayoutsAdmin.jsx"></script>
+<script type="text/babel" src="src/admin/SiteSettings.jsx"></script>
 
 <script type="text/babel">
   const { useState, useEffect, useCallback } = React;
@@ -206,18 +207,26 @@
   // ---------- Marketing surface ----------
   function MarketingApp({ onAuth }){
     const [auth, setAuth] = useState({open:false, mode:"signup"});
+    const [siteConfig, setSiteConfig] = useState(null);
     const openAuth = (mode) => setAuth({open:true, mode});
     const closeAuth = () => setAuth(a => ({...a, open:false}));
     const doSwitch = () => setAuth(a => ({...a, mode: a.mode==="signup"?"login":"signup"}));
+
+    useEffect(() => {
+      let mounted = true;
+      api.getSiteConfig().then(r => { if (mounted && !r.error && r.data) setSiteConfig(r.data); });
+      return () => { mounted = false; };
+    }, []);
+
     return (
       <div style={{background:"#0A0A0A",color:"#FAFAF7",minHeight:"100vh"}}>
         <Nav onJoin={()=>openAuth("signup")} onLogin={()=>openAuth("login")}/>
-        <Hero onJoin={()=>openAuth("signup")} variant="clip-post-paid"/>
+        <Hero onJoin={()=>openAuth("signup")} variant="clip-post-paid" siteConfig={siteConfig}/>
         <PayoutTicker/>
         <HowItWorks/>
         <CampaignGrid onJoin={()=>openAuth("signup")}/>
-        <FounderVideo/>
-        <ProofSection/>
+        <FounderVideo siteConfig={siteConfig}/>
+        <ProofSection siteConfig={siteConfig}/>
         <Faq/>
         <CtaFooter onJoin={()=>openAuth("signup")}/>
         <AuthModal
@@ -308,6 +317,7 @@
           {view==="review"    && <ReviewQueue    key={"r"+refreshKey} onChanged={bumpRefresh}/>}
           {view==="campaigns" && <CampaignEditor key={"c"+refreshKey} onChanged={bumpRefresh}/>}
           {view==="payouts"   && <PayoutsAdmin   key={"p"+refreshKey} onChanged={bumpRefresh}/>}
+          {view==="settings"  && <SiteSettings   key={"s"+refreshKey} onChanged={bumpRefresh}/>}
         </div>
       </div>
     );

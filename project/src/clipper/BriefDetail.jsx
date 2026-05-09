@@ -49,7 +49,8 @@ function BriefDetail({ campaign, profile, onBack, onSubmit }){
     <div style={{padding:"0 0 60px",background:"#FAFAF7",minHeight:"100vh"}}>
       {playerOpen && <VideoPlayerModal url={playerOpen.url} onClose={() => setPlayerOpen(null)}/>}
       <div className="br-banner" style={{position:"relative",height:200,background:`linear-gradient(135deg,${tint},#1a1a1a)`,overflow:"hidden"}}>
-        <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18), transparent 50%)"}}/>
+        {c.banner_url && <img src={c.banner_url} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
+        <div style={{position:"absolute",inset:0,background:c.banner_url?"linear-gradient(transparent 30%, rgba(0,0,0,0.55))":"radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18), transparent 50%)"}}/>
         <div style={{position:"relative",maxWidth:1100,margin:"0 auto",padding:"22px 28px",height:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",color:"#fff"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <button onClick={onBack} style={{background:"rgba(255,255,255,0.12)",backdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,0.18)",borderRadius:999,padding:"6px 12px",color:"#fff",fontFamily:"Geist,sans-serif",fontSize:13,fontWeight:500,cursor:"pointer"}}>← Back</button>

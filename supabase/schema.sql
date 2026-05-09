@@ -43,6 +43,7 @@ create table if not exists campaigns (
   assets            jsonb default '[]'::jsonb,   -- [{label,sub,url,kind}]
   dos               jsonb default '[]'::jsonb,
   donts             jsonb default '[]'::jsonb,
+  banner_url        text,                       -- optional image URL for campaign banner
   discord_url       text,
   created_at        timestamptz default now(),
   updated_at        timestamptz default now()
@@ -211,6 +212,30 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();
+
+-- ==========================================================
+-- site_config — single-row table for site-wide admin settings
+-- (hero video, founder info, etc.)
+-- ==========================================================
+create table if not exists site_config (
+  id                  text primary key default 'main',
+  hero_video_url      text,          -- Instagram reel URL for hero phone
+  founder_name        text default 'Kevis',
+  founder_photo_url   text,          -- URL to founder's headshot
+  founder_video_url   text,          -- YouTube/Loom URL for the founder video section
+  founder_video_title text default 'How Clippr works (2 min)',
+  updated_at          timestamptz default now()
+);
+
+insert into site_config (id) values ('main') on conflict (id) do nothing;
+
+alter table site_config enable row level security;
+
+drop policy if exists "site_config public read" on site_config;
+create policy "site_config public read" on site_config for select using (true);
+
+drop policy if exists "site_config admin write" on site_config;
+create policy "site_config admin write" on site_config for update using (is_current_user_admin());
 
 -- ==========================================================
 -- Seed: Rizz campaign (so the marketing page has something LIVE)

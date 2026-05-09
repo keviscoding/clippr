@@ -42,10 +42,14 @@ function CampaignsList({ onSubmit, onOpenBrief }){
         return (
           <div key={c.id} className="clp-camp-card" style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,overflow:"hidden",boxShadow:"0 1px 2px rgba(10,10,10,0.03)"}}>
             <div className="clp-camp-card-grid" style={{display:"grid",gridTemplateColumns:"120px 1fr",gap:0}}>
-              <div className="clp-camp-card-tint" style={{background:`linear-gradient(135deg, ${c.tint || "#6366f1"}, #1a1a1a)`,display:"grid",placeItems:"center",minHeight:120}}>
-                <div style={{width:52,height:52,borderRadius:12,background:"rgba(255,255,255,0.18)",backdropFilter:"blur(8px)",display:"grid",placeItems:"center",color:"#fff"}}>
-                  <Icon name="flag" size={22} stroke={2}/>
-                </div>
+              <div className="clp-camp-card-tint" style={{background:`linear-gradient(135deg, ${c.tint || "#6366f1"}, #1a1a1a)`,display:"grid",placeItems:"center",minHeight:120,position:"relative",overflow:"hidden"}}>
+                {c.banner_url ? (
+                  <img src={c.banner_url} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+                ) : (
+                  <div style={{width:52,height:52,borderRadius:12,background:"rgba(255,255,255,0.18)",backdropFilter:"blur(8px)",display:"grid",placeItems:"center",color:"#fff"}}>
+                    <Icon name="flag" size={22} stroke={2}/>
+                  </div>
+                )}
               </div>
               <div className="clp-camp-card-body" style={{padding:"18px 22px"}}>
                 <div className="clp-camp-card-head" style={{display:"flex",justifyContent:"space-between",alignItems:"start",gap:12,flexWrap:"wrap"}}>

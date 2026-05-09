@@ -239,6 +239,25 @@
     return error ? err(error) : ok(data);
   }
 
+  // ---------- Site config ----------
+  async function getSiteConfig(){
+    const r = requireClient(); if (r) return r;
+    const { data, error } = await client.from("site_config").select("*").eq("id", "main").maybeSingle();
+    return error ? err(error) : ok(data);
+  }
+  async function updateSiteConfig(patch){
+    const r = requireClient(); if (r) return r;
+    try {
+      const payload = { ...patch, updated_at: new Date().toISOString() };
+      const { data, error } = await withTimeout(
+        client.from("site_config").update(payload).eq("id", "main").select().maybeSingle()
+      );
+      return error ? err(error) : ok(data);
+    } catch (e) {
+      return err({ message: e.message || "Config update failed" });
+    }
+  }
+
   // ---------- Admin stats ----------
   async function getAdminStats(){
     const r = requireClient(); if (r) return r;
@@ -353,6 +372,8 @@
     getMyBalance,
     // payouts
     requestPayout, listMyPayouts, listAllPayouts, listPendingPayouts, listRecentPaidPayouts, processPayout,
+    // site config
+    getSiteConfig, updateSiteConfig,
     // admin
     getAdminStats,
     // helpers

@@ -1,6 +1,6 @@
 /* global React, Eyebrow, Icon, Badge */
 
-function ProofSection(){
+function ProofSection({ siteConfig }){
   return (
     <section id="proof" className="m-section" style={{padding:"80px 32px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}>
@@ -13,7 +13,13 @@ function ProofSection(){
           {/* Kevis card */}
           <div style={{background:"linear-gradient(180deg,#141414,#0E0E0E)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20,padding:28,boxShadow:"inset 0 1px 0 rgba(255,255,255,0.08)"}}>
             <div style={{display:"flex",gap:20,alignItems:"center",marginBottom:24}}>
-              <div style={{width:72,height:72,borderRadius:999,background:"linear-gradient(135deg,#D4FF3A,#4ADE80)",display:"grid",placeItems:"center",color:"#0A0A0A",fontFamily:"Geist,sans-serif",fontSize:30,fontWeight:700}}>K</div>
+              {(siteConfig && siteConfig.founder_photo_url) ? (
+                <div style={{width:72,height:72,borderRadius:999,overflow:"hidden",flexShrink:0,border:"2px solid #D4FF3A"}}>
+                  <img src={siteConfig.founder_photo_url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                </div>
+              ) : (
+                <div style={{width:72,height:72,borderRadius:999,background:"linear-gradient(135deg,#D4FF3A,#4ADE80)",display:"grid",placeItems:"center",color:"#0A0A0A",fontFamily:"Geist,sans-serif",fontSize:30,fontWeight:700}}>K</div>
+              )}
               <div>
                 <div style={{fontSize:24,fontWeight:600,letterSpacing:"-0.02em",color:"#FAFAF7"}}>Kevis</div>
                 <div style={{fontSize:14,color:"rgba(250,250,247,0.65)"}}>Founder · @KevisStrats · ViewMastery</div>

@@ -33,9 +33,12 @@ function CampaignGrid({ onJoin }){
         <div className="m-grid-2" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
           {display.map((c,i) => (
             <div key={c.id || c.name || i} style={{background:"#121212",border:"1px solid rgba(255,255,255,0.08)",borderRadius:20,padding:0,overflow:"hidden",boxShadow:"inset 0 1px 0 rgba(255,255,255,0.06)"}}>
-              <div style={{height:140,background:`linear-gradient(135deg, ${c.tint||"#6366f1"}, #0a0a0a)`,position:"relative",display:"flex",alignItems:"flex-end",padding:18}}>
-                {!c.soon && <div style={{position:"absolute",top:14,right:14}}><Badge tone="lime">🔥 HOT</Badge></div>}
-                {!c.soon ? <Badge tone="live">LIVE</Badge> : <Badge tone="neutral">COMING SOON</Badge>}
+              <div style={{height:140,background:`linear-gradient(135deg, ${c.tint||"#6366f1"}, #0a0a0a)`,position:"relative",display:"flex",alignItems:"flex-end",padding:18,overflow:"hidden"}}>
+                {c.banner_url && <img src={c.banner_url} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
+                <div style={{position:"relative",zIndex:1,display:"flex",justifyContent:"space-between",width:"100%",alignItems:"flex-end"}}>
+                  {!c.soon ? <Badge tone="live">LIVE</Badge> : <Badge tone="neutral">COMING SOON</Badge>}
+                  {!c.soon && <Badge tone="lime">🔥 HOT</Badge>}
+                </div>
               </div>
               <div className="m-camp-card-body" style={{padding:22}}>
                 <h3 style={{fontSize:22,fontWeight:600,letterSpacing:"-0.02em",color:"#FAFAF7",margin:"0 0 4px"}}>{c.name}</h3>

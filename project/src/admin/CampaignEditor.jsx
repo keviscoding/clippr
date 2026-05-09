@@ -19,7 +19,7 @@ function CampaignEditor({ onChanged }){
   const startNew = () => setEditing({
     slug: "", name: "", tag: "", description: "", brief_md: "", rpm: 1.00,
     min_views: 1000, payout_floor: 20, monthly_budget: 25000, budget_remaining: 25000,
-    status: "draft", tint: "#6366f1",
+    status: "draft", tint: "#6366f1", banner_url: "",
     examples: [], assets: [], dos: [], donts: [], discord_url: "",
   });
   const startEdit = (c) => setEditing({ ...c });
@@ -80,7 +80,9 @@ function CampaignEditor({ onChanged }){
         <div style={{display:"flex",flexDirection:"column",gap:10}}>
           {campaigns.map(c => (
             <div key={c.id} style={{background:"#fff",border:"1px solid #E8E6DF",borderRadius:14,padding:18,display:"grid",gridTemplateColumns:"56px 1fr auto",gap:16,alignItems:"center"}}>
-              <div style={{width:48,height:48,borderRadius:10,background:`linear-gradient(135deg, ${c.tint||"#6366f1"}, #1a1a1a)`,display:"grid",placeItems:"center",color:"#fff"}}><Icon name="flag" size={20}/></div>
+              <div style={{width:48,height:48,borderRadius:10,background:`linear-gradient(135deg, ${c.tint||"#6366f1"}, #1a1a1a)`,display:"grid",placeItems:"center",color:"#fff",overflow:"hidden",position:"relative"}}>
+                {c.banner_url ? <img src={c.banner_url} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}}/> : <Icon name="flag" size={20}/>}
+              </div>
               <div>
                 <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
                   <h3 style={{fontSize:16,fontWeight:600,letterSpacing:"-0.01em",margin:0}}>{c.name}</h3>
@@ -127,8 +129,14 @@ function Editor({ editing, setEditing, save, busy, errMsg, onCancel }){
         <Field label="Tag" value={editing.tag} onChange={v=>set("tag", v)} placeholder="Dating · Lifestyle"/>
         <Field label="Description" multiline value={editing.description} onChange={v=>set("description", v)} placeholder="One-sentence summary."/>
         <Field label="Brief (markdown)" multiline rows={5} value={editing.brief_md} onChange={v=>set("brief_md", v)} placeholder="Hook within 1.5s. Use the POV format. Show the app screen recording…"/>
+        <Field label="Banner image URL (optional — falls back to tint gradient)" value={editing.banner_url} onChange={v=>set("banner_url", v)} placeholder="https://i.imgur.com/…  or any image URL"/>
+        {editing.banner_url && (
+          <div style={{height:100,borderRadius:10,overflow:"hidden",border:"1px solid #E8E6DF",background:`linear-gradient(135deg, ${editing.tint||"#6366f1"}, #1a1a1a)`}}>
+            <img src={editing.banner_url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.display="none"}}/>
+          </div>
+        )}
         <Row>
-          <Field label="Tint (hex)" value={editing.tint} onChange={v=>set("tint", v)} placeholder="#6366f1"/>
+          <Field label="Tint (hex — used as fallback color)" value={editing.tint} onChange={v=>set("tint", v)} placeholder="#6366f1"/>
           <Field label="Status" select options={[{v:"draft",l:"Draft"},{v:"live",l:"Live"},{v:"paused",l:"Paused"},{v:"ended",l:"Ended"}]} value={editing.status} onChange={v=>set("status", v)}/>
         </Row>
         <Field label="Discord URL (optional)" value={editing.discord_url} onChange={v=>set("discord_url", v)} placeholder="https://discord.gg/xxxxx"/>

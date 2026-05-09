@@ -15,6 +15,7 @@ function AdminSidebar({ view, setView, profile, onSignOut }){
     {id:"review",    label:"Review queue", icon:"check", count: counts.pending || null},
     {id:"campaigns", label:"Campaigns",    icon:"flag"},
     {id:"payouts",   label:"Payouts",      icon:"wallet", count: counts.payouts || null},
+    {id:"settings",  label:"Site settings", icon:"settings"},
   ];
   const initial = (profile && profile.display_name && profile.display_name[0] ? profile.display_name[0] : "K").toUpperCase();
   return (
